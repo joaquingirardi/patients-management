@@ -1,0 +1,55 @@
+# REST Client (VS Code) / JetBrains HTTP Client collection.
+@base = http://localhost:3001
+
+### Login as admin (copy the token into @token below)
+# @name login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "admin@northwind.test", "password": "Password123!" }
+
+###
+@token = {{login.response.body.token}}
+
+### List — search, sort, paginate
+GET {{base}}/patients?search=ol&sortBy=dob&order=desc&page=1&limit=5
+Authorization: Bearer {{token}}
+
+### Create
+# @name created
+POST {{base}}/patients
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Ada",
+  "lastName": "Lovelace",
+  "email": "Ada@Example.com",
+  "phoneNumber": "+1 (415) 555-0132",
+  "dob": "1990-03-04"
+}
+
+### Get
+GET {{base}}/patients/{{created.response.body.id}}
+Authorization: Bearer {{token}}
+
+### Update (version must match)
+PUT {{base}}/patients/{{created.response.body.id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Ada",
+  "lastName": "King",
+  "email": "ada@example.com",
+  "phoneNumber": "+14155550132",
+  "dob": "1990-03-04",
+  "version": 1
+}
+
+### Delete (soft)
+DELETE {{base}}/patients/{{created.response.body.id}}
+Authorization: Bearer {{token}}
+
+### Health
+GET {{base}}/health

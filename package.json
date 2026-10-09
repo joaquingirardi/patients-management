@@ -1,0 +1,42 @@
+{
+  "name": "patients-management",
+  "private": true,
+  "description": "Role-aware patients management system \u2014 Next.js + NestJS + PostgreSQL monorepo.",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.9.0",
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:integration": "turbo run test:integration",
+    "test:e2e": "pnpm --filter @pm/web test:e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "pnpm format:check && turbo run lint typecheck test",
+    "db:up": "docker compose up -d db",
+    "db:migrate": "pnpm --filter @pm/api db:migrate",
+    "db:seed": "pnpm --filter @pm/api db:seed",
+    "db:reset": "pnpm --filter @pm/api db:reset",
+    "stack:up": "docker compose up --build -d",
+    "stack:down": "docker compose down",
+    "prepare": "husky || true",
+    "test:cov": "turbo run test:cov"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
+    "prettier": "^3.6.0",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "turbo": "^2.5.0",
+    "typescript": "~5.9.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css}": "prettier --write"
+  }
+}

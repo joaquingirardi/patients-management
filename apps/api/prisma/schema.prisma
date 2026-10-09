@@ -1,0 +1,95 @@
+// Patients Management — data model.
+//
+// Conventions
+//  * Tables and columns are snake_case in Postgres, camelCase in TypeScript (@map / @@map).
+//  * Every patient row belongs to exactly one organization: tenancy is enforced in *every* query
+//    (see PatientsRepository), so authorization is a property of data access, not an afterthought.
+//  * Patients are soft-deleted (`deleted_at`): clinical records are retained, never destroyed.
+//  * `version` enables optimistic concurrency control on updates (lost-update protection).
+//  * Invariants Prisma cannot express (CHECK constraints, pg_trgm) live in the migration SQL.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+
+  @@map("role")
+}
+
+model Organization {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(120)
+  slug      String   @unique @db.VarChar(60)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  users    User[]
+  patients Patient[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  /// Always stored lower-cased; login is case-insensitive by normalisation, not by collation.
+  email          String   @unique @db.VarChar(254)
+  name           String   @db.VarChar(120)
+  passwordHash   String   @map("password_hash") @db.VarChar(100)
+  role           Role     @default(user)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  patientsCreated  Patient[]    @relation("PatientCreatedBy")
+  patientsUpdated  Patient[]    @relation("PatientUpdatedBy")
+  patientsDeleted  Patient[]    @relation("PatientDeletedBy")
+
+  @@index([organizationId])
+  @@map("users")
+}
+
+model Patient {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @map("organization_id") @db.Uuid
+  firstName      String    @map("first_name") @db.VarChar(100)
+  lastName       String    @map("last_name") @db.VarChar(100)
+  /// Deliberately NOT unique: relatives (e.g. a parent and their children) often share one inbox.
+  email          String    @db.VarChar(254)
+  /// E.164, e.g. +14155550132.
+  phoneNumber    String    @map("phone_number") @db.VarChar(16)
+  /// A calendar date, not an instant — immune to timezone shifts.
+  dob            DateTime  @db.Date
+  version        Int       @default(1)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt      DateTime? @map("deleted_at") @db.Timestamptz(3)
+  createdById    String?   @map("created_by_id") @db.Uuid
+  updatedById    String?   @map("updated_by_id") @db.Uuid
+  deletedById    String?   @map("deleted_by_id") @db.Uuid
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  createdBy    User?        @relation("PatientCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy    User?        @relation("PatientUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  deletedBy    User?        @relation("PatientDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+
+  // Composite indexes lead with organization_id: every query is tenant-scoped, and the trailing
+  // columns match the supported sort orders (including the `id` tie-breaker for stable paging).
+  @@index([organizationId, lastName, firstName, id])
+  @@index([organizationId, firstName, lastName, id])
+  @@index([organizationId, dob, id])
+  @@index([organizationId, createdAt, id])
+  // Trigram GIN indexes make the substring search (ILIKE '%term%') index-assisted.
+  @@index([firstName(ops: raw("gin_trgm_ops"))], type: Gin, map: "patients_first_name_trgm_idx")
+  @@index([lastName(ops: raw("gin_trgm_ops"))], type: Gin, map: "patients_last_name_trgm_idx")
+  @@index([email(ops: raw("gin_trgm_ops"))], type: Gin, map: "patients_email_trgm_idx")
+  @@map("patients")
+}

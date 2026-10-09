@@ -1,0 +1,21 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Native/postinstall scripts we explicitly trust (pnpm 10 blocks them by default).
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
+  - '@swc/core'
+  - esbuild
+  - sharp
+  - unrs-resolver
+
+# Optional native accelerators we deliberately do not build (pure-JS fallbacks are fine).
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - cpu-features
+  - protobufjs
+  - ssh2
+  - msw
