@@ -23,8 +23,8 @@ export const AuthUserSchema = z.object({
 export type AuthUser = z.infer<typeof AuthUserSchema>;
 
 /**
- * `POST /auth/login` response. A strict superset of the required `{ token, user: { email, role } }`
- * contract: `expiresAt` lets clients schedule expiry handling without decoding the token.
+ * `POST /auth/login` response: `{ token, user: { email, role } }` plus `expiresAt`, so clients
+ * can handle expiry without decoding the token.
  */
 export const LoginResponseSchema = z.object({
   token: z.string(),
@@ -33,7 +33,7 @@ export const LoginResponseSchema = z.object({
 });
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 
-/** Claims carried by the access token. `role` is the role claim required by the spec. */
+/** Claims carried by the access token. */
 export const AccessTokenClaimsSchema = z.object({
   sub: z.uuid(),
   email: z.email(),

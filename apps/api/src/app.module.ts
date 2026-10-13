@@ -21,8 +21,8 @@ import { PatientsModule } from './patients/patients.module';
       useFactory: ({ throttle }: AppConfig) => ({
         throttlers: [
           { name: 'default', ttl: throttle.ttlMs, limit: throttle.limit },
-          // Login is limited per client IP *and* per target account: even an attacker rotating
-          // IPs cannot guess one account's password faster than `loginLimit` per window.
+          // Login is limited per client IP and per target account, so rotating IPs doesn't let
+          // an attacker try one account's password more than `loginLimit` times per window.
           { name: 'login', ttl: throttle.ttlMs, limit: throttle.loginLimit },
           {
             name: 'loginAccount',

@@ -11,7 +11,7 @@ export interface AuthenticatedRequest extends Request {
   actor?: Actor;
 }
 
-/** Global guard: every route requires a valid Bearer token unless marked @Public(). → 401 */
+/** Global guard: every route requires a valid Bearer token (401) unless marked @Public(). */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(

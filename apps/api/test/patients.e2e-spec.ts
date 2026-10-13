@@ -111,7 +111,7 @@ describe('Patients (e2e)', () => {
       );
     });
 
-    it('never shows another tenant’s patients', async () => {
+    it('never shows patients from another tenant', async () => {
       const ids = (await list({ limit: 100 })).data.map((p) => p.id);
       expect(ids).not.toContain(world.foreignPatientId);
       expect((await list({}, foreignAdmin)).total).toBe(1);
@@ -129,7 +129,7 @@ describe('Patients (e2e)', () => {
       expect(res.body).toMatchObject({ id: target?.id, dob: target?.dob, version: 1 });
     });
 
-    it('404s (not 403) for another tenant’s patient — existence is not leaked', async () => {
+    it('404s (not 403) for a patient from another tenant, so existence is not leaked', async () => {
       const res = await t.http().get(`/patients/${world.foreignPatientId}`).set(admin).expect(404);
       expect(res.body).toMatchObject({ code: ErrorCode.NotFound });
     });
@@ -161,7 +161,7 @@ describe('Patients (e2e)', () => {
     });
   });
 
-  describe('admin lifecycle: create → read → update → conflict → delete', () => {
+  describe('admin lifecycle: create, read, update, conflict, delete', () => {
     let created: Patient;
 
     it('POST creates, normalises input and returns 201 with Location', async () => {
@@ -179,7 +179,7 @@ describe('Patients (e2e)', () => {
         version: 1,
       });
 
-      // Mass assignment is impossible: the record landed in the admin's own tenant.
+      // organizationId in the body is ignored: the record lands in the admin's own tenant.
       const row = await prisma.patient.findUniqueOrThrow({ where: { id: created.id } });
       expect(row.organizationId).toBe(world.northwind.id);
     });
@@ -238,7 +238,7 @@ describe('Patients (e2e)', () => {
       expect(res.body).toMatchObject({ errors: [{ path: 'version' }] });
     });
 
-    it('PUT/DELETE on another tenant’s patient are 404', async () => {
+    it('PUT/DELETE on a patient from another tenant are 404', async () => {
       await t
         .http()
         .put(`/patients/${world.foreignPatientId}`)

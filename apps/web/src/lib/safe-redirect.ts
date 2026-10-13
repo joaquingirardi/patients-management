@@ -2,8 +2,8 @@ const FALLBACK = '/patients';
 const SENTINEL_ORIGIN = 'http://safe-redirect.invalid';
 
 /**
- * Only same-origin *paths* are allowed as post-login destinations. Rather than pattern-matching
- * strings (which browsers normalise in surprising ways — tabs and newlines are stripped, so
+ * Only same-origin paths are allowed as post-login destinations. Rather than pattern-matching
+ * strings (which browsers normalise in surprising ways: tabs and newlines are stripped, so
  * "/\t/evil.test" becomes "//evil.test"), the value is parsed exactly as the browser would and
  * rejected unless it stays on our origin. Only the path, query and hash are kept.
  */

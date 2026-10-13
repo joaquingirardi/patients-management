@@ -4,10 +4,6 @@ import { bearer, login } from './support/auth';
 import { seedWorld } from './support/fixtures';
 import { createPrisma, createTestApp, type TestApp } from './support/test-app';
 
-/**
- * The database is made deliberately flaky (deterministically, via ChaosController) to prove the
- * retry policy end to end through the real HTTP stack.
- */
 describe('Resilience against a flaky database (e2e)', () => {
   let t: TestApp;
   let auth: Record<string, string>;
@@ -24,7 +20,7 @@ describe('Resilience against a flaky database (e2e)', () => {
     await prisma.$disconnect();
   });
 
-  it('absorbs transient failures with retries — the client never notices', async () => {
+  it('absorbs transient failures with retries so the client never sees them', async () => {
     t.chaos.failNext(2);
     const res = await t.http().get('/patients').set(auth).expect(200);
     expect((res.body as PatientList).total).toBe(12);

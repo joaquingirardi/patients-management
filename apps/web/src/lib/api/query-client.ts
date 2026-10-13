@@ -5,11 +5,11 @@ import { ApiError } from './problem';
 const MAX_RETRIES = 3;
 
 /**
- * Resilience policy on the client, mirroring the server's:
+ * Retry policy:
  *  - queries (idempotent GETs) retry transient failures with jittered exponential backoff,
  *    honouring `Retry-After` when the server sends one;
- *  - 4xx errors are never retried — they will not fix themselves;
- *  - mutations are never retried automatically — the user decides (toast → "Retry").
+ *  - 4xx errors are never retried;
+ *  - mutations are never retried automatically; the toast offers a "Retry" action instead.
  */
 export function createQueryClient(): QueryClient {
   return new QueryClient({

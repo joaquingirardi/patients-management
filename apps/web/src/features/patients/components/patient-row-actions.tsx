@@ -18,10 +18,7 @@ import { fullName } from '../lib/format';
 import { usePatientHref } from '../lib/use-patients-search-params';
 import { usePatientActions } from './patient-actions-provider';
 
-/**
- * Role-gated row actions. Viewers get "View" only — write actions are not rendered at all
- * rather than shown disabled, which keeps the menu honest and uncluttered.
- */
+/** Viewers only get "View"; write actions are hidden rather than shown disabled. */
 export function PatientRowActions({ patient, disabled }: { patient: Patient; disabled?: boolean }) {
   const router = useRouter();
   const canWrite = useCan(Permission.PatientsWrite);

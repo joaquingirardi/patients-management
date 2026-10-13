@@ -11,7 +11,7 @@ export function initials(name: string): string {
 }
 
 /**
- * Date-only values are formatted in UTC on purpose: `new Date('1990-03-04')` is UTC midnight,
+ * Date-only values are formatted in UTC: `new Date('1990-03-04')` is UTC midnight,
  * and formatting it in a negative-offset local timezone would show March 3rd.
  */
 const dobFormatter = new Intl.DateTimeFormat('en-US', {
@@ -31,13 +31,13 @@ export function ageOn(dob: string, today: string = localToday()): number {
   return ty - by - (hadBirthday ? 0 : 1);
 }
 
-/** Today's date in the *user's* timezone, as `YYYY-MM-DD` (for input max= and age). */
+/** Today's date in the user's timezone, as `YYYY-MM-DD` (for input max= and age). */
 export function localToday(now = new Date()): string {
   const offsetMs = now.getTimezoneOffset() * 60_000;
   return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
 }
 
-/** E.164 → human friendly. NANP numbers get the familiar (415) 555-0132 shape. */
+/** Formats an E.164 number for display; NANP numbers become (415) 555-0132. */
 export function formatPhone(e164: string): string {
   const nanp = /^\+1(\d{3})(\d{3})(\d{4})$/.exec(e164);
   if (nanp) return `+1 (${nanp[1] ?? ''}) ${nanp[2] ?? ''}-${nanp[3] ?? ''}`;

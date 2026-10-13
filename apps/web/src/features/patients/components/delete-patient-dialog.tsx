@@ -30,8 +30,8 @@ export function DeletePatientDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete {patient ? fullName(patient) : 'patient'}?</AlertDialogTitle>
           <AlertDialogDescription>
-            The patient will no longer appear in your organization’s records. For compliance, the
-            underlying record is archived rather than permanently erased.
+            The patient will no longer appear in your organization&apos;s records. For compliance,
+            the underlying record is archived rather than permanently erased.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

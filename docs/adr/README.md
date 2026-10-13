@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Short, dated records of decisions a reviewer is likely to ask "why?" about. Each one states the
+Short, dated records of the decisions that are not obvious from the code. Each one states the
 context, the decision, the alternatives that lost, and the consequences we accept.
 
 | #                                                 | Decision                                                                    | Status   |

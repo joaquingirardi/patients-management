@@ -8,8 +8,8 @@ const CLOCK_SKEW_SECONDS = 5;
 
 /**
  * Reads (does NOT verify) the access-token claims. The web tier holds no signing secret by
- * design; it only needs the claims for UX — routing, rendering role-aware UI, scheduling the
- * expiry. Every data request is verified by the API, which remains the sole authority.
+ * design; it only needs the claims for UX (routing, role-aware UI, scheduling the
+ * expiry). Every data request is verified by the API, which remains the sole authority.
  */
 export function readClaims(token: string | undefined): AccessTokenClaims | null {
   if (!token) return null;

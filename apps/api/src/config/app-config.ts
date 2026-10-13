@@ -2,10 +2,7 @@ import { z } from 'zod';
 
 const bool = z.stringbool({ truthy: ['true', '1', 'yes'], falsy: ['false', '0', 'no'] });
 
-/**
- * The process environment is untrusted input like any other: it is parsed once, at boot,
- * and the app refuses to start with a precise error if anything is missing or malformed.
- */
+// Parsed once at boot; the app refuses to start if anything is missing or malformed.
 const EnvSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -24,9 +21,9 @@ const EnvSchema = z
           .filter(Boolean),
       ),
 
-    /** Reverse proxies in front of the API whose X-Forwarded-For we trust (the web BFF = 1). */
     /** Serve Swagger UI at /docs (+ /docs/openapi.json). Defaults to on outside production. */
     API_DOCS_ENABLED: bool.optional(),
+    /** Reverse proxies in front of the API whose X-Forwarded-For we trust (the web BFF = 1). */
     TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(1),
 
     DATABASE_URL: z.url({ protocol: /^postgres(ql)?$/ }),

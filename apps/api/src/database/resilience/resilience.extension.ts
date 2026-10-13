@@ -18,11 +18,11 @@ export interface ResilienceDeps {
 }
 
 /**
- * The policy for one database operation: chaos (when enabled) → query, inside a retry loop
- * governed by `isSafeToRetry`. When retries cannot help, transient failures are translated:
- *  - provably not applied (or a read)  → DependencyUnavailableError (503 + Retry-After)
- *  - a write that died *mid-flight*    → OutcomeUnknownError (503, no Retry-After): it may have
- *    committed, so telling the client "retry shortly" could create a duplicate.
+ * Runs one database operation (chaos when enabled, then the query) in a retry loop governed by
+ * `isSafeToRetry`. When retries run out, transient failures are translated:
+ *  - a read, or a write that never reached the DB: DependencyUnavailableError (503 + Retry-After)
+ *  - a write that died mid-flight: OutcomeUnknownError (503, no Retry-After). It may have
+ *    committed, so telling the client to retry could create a duplicate.
  */
 export async function runResilient<T>(
   { model, operation }: { model: string; operation: string },
@@ -56,11 +56,8 @@ export async function runResilient<T>(
 }
 
 /**
- * Applies `runResilient` to every model query. Living at the client boundary keeps repositories
- * free of resilience plumbing: they describe *what* to query, this describes *how hard to try*.
- *
- * Not for transactions: a retried statement would run outside its batch/interactive transaction.
- * The `Database` type therefore omits `$transaction` (see database.ts).
+ * Applies `runResilient` to every model query, so repositories don't deal with retries.
+ * Not for transactions (a retried statement would run outside it); see database.ts.
  */
 export function resilienceExtension(deps: ResilienceDeps) {
   return Prisma.defineExtension({

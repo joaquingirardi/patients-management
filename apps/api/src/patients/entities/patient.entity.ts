@@ -1,11 +1,6 @@
 import { type Patient } from '@pm/contracts';
 import { type Patient as PatientRow } from '@prisma/client';
 
-/**
- * The persistence entity is the Prisma model (`prisma/schema.prisma`). This file defines the
- * slice of it the module works with, and the mapping to the public representation.
- */
-
 /** Columns ever sent to clients. Audit and tenancy columns stay server-side. */
 export const PATIENT_PUBLIC_FIELDS = {
   id: true,

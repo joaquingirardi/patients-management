@@ -1,6 +1,6 @@
 /**
- * Date-of-birth is a *calendar date*, not an instant. It travels as `YYYY-MM-DD` and is stored
- * as a Postgres `DATE`, so it can never shift by a day because of a timezone conversion.
+ * Date of birth is a calendar date, not an instant. It travels as `YYYY-MM-DD` and is stored
+ * as a Postgres `DATE`, so it can't shift by a day because of a timezone conversion.
  */
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
@@ -16,15 +16,15 @@ export function isValidCalendarDate(value: string): boolean {
 
 /**
  * The latest calendar date currently observed anywhere on Earth (UTC+14, Line Islands).
- * Validating "not in the future" against this — instead of the server's UTC date — means a
- * patient born "today" in Auckland is never rejected by a server running in UTC.
+ * Checking "not in the future" against this rather than the server's UTC date means a patient
+ * born "today" in Auckland isn't rejected by a server running in UTC.
  */
 export function latestCalendarDateOnEarth(now: Date = new Date()): string {
   const UTC_PLUS_14_MS = 14 * 60 * 60 * 1000;
   return new Date(now.getTime() + UTC_PLUS_14_MS).toISOString().slice(0, 10);
 }
 
-/** `YYYY-MM-DD` strings are lexicographically ordered, so plain string comparison is exact. */
+// `YYYY-MM-DD` strings sort lexicographically, so string comparison works.
 export function isDateOnOrBefore(value: string, limit: string): boolean {
   return value <= limit;
 }

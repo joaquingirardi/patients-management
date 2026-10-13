@@ -52,7 +52,7 @@ jobs:
     timeout-minutes: 25
     needs: [quality]
     env:
-      # Deterministic run: failures should mean bugs, not dice rolls.
+      # Chaos off so e2e runs are deterministic.
       CHAOS_ENABLED: 'false'
       THROTTLE_LOGIN_LIMIT: '1000'
     steps:

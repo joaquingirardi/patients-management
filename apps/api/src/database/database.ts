@@ -16,9 +16,9 @@ function extend(
 }
 
 /**
- * What repositories get: every model, retried safely — and deliberately *no* `$transaction`.
- * Statement-level retries are unsound inside a transaction (a retried statement would run
- * outside it), so transactional work must use a client without the extension, on purpose.
+ * The client repositories get: every model with retries, but no `$transaction`. A retried
+ * statement would run outside the transaction, so transactional work has to use a client
+ * without the extension.
  */
 export type Database = Omit<ReturnType<typeof extend>, '$transaction'>;
 

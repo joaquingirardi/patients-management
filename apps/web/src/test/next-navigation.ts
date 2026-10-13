@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { vi } from 'vitest';
 
-/**
- * A reactive stand-in for `next/navigation`: router.push/replace really change the URL that
- * useSearchParams/usePathname observe, so URL-driven UI can be tested end to end.
- */
+/** Stand-in for `next/navigation` where router.push/replace update what useSearchParams sees. */
 let url = new URL('http://localhost/patients');
 const listeners = new Set<() => void>();
 const subscribe = (listener: () => void) => {

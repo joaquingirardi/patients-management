@@ -17,7 +17,7 @@ import { DependencyUnavailableError, DomainError, ValidationError } from './doma
 
 const PROBLEM_JSON = 'application/problem+json';
 
-/** Exhaustive by construction: adding an ErrorCode without a mapping fails the build. */
+// Typed as a full Record so adding an ErrorCode without a mapping fails the build.
 const PROBLEM_BY_CODE: Record<ErrorCode, { status: HttpStatus; title: string }> = {
   [ErrorCode.BadRequest]: { status: HttpStatus.BAD_REQUEST, title: 'Bad request' },
   [ErrorCode.ValidationFailed]: { status: HttpStatus.BAD_REQUEST, title: 'Validation failed' },
@@ -69,9 +69,8 @@ function safeForLogs(error: unknown): unknown {
 const problemType = (code: ErrorCode) => `urn:pm:problem:${code.toLowerCase().replace(/_/g, '-')}`;
 
 /**
- * Turns *every* error into an RFC 9457 Problem Details response with a stable `code` and the
- * request id. Unknown errors are logged with their stack and returned as an opaque 500 —
- * internals never leak to clients.
+ * Turns every error into an RFC 9457 Problem Details response with a stable `code` and the
+ * request id. Unknown errors are logged with their stack and returned as an opaque 500.
  */
 @Catch()
 export class ProblemDetailsFilter implements ExceptionFilter {
@@ -98,7 +97,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       );
     }
 
-    // RFC 6750 §3: tell Bearer clients *why* their token was rejected.
+    // RFC 6750 §3: tell Bearer clients why their token was rejected.
     if (problem.code === ErrorCode.TokenExpired) {
       response.setHeader(
         'WWW-Authenticate',
@@ -132,7 +131,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     }
 
     if (exception instanceof HttpException) {
-      // Framework-level errors: unknown routes, malformed JSON bodies, oversized payloads…
+      // Framework-level errors: unknown routes, malformed JSON bodies, oversized payloads, etc.
       const status = exception.getStatus();
       const code =
         CODE_BY_HTTP_STATUS[status] ?? (status >= 500 ? ErrorCode.Internal : ErrorCode.BadRequest);

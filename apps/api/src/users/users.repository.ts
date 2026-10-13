@@ -6,7 +6,7 @@ import { DATABASE, type Database } from '../database/database';
 export class UsersRepository {
   constructor(@Inject(DATABASE) private readonly db: Database) {}
 
-  /** Emails are normalised to lower case on write, so lookup is a plain index hit. */
+  // Emails are stored lower-cased, so this is a plain index lookup.
   findByEmail(email: string) {
     return this.db.user.findUnique({
       where: { email: email.toLowerCase() },

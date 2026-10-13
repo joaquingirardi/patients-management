@@ -11,7 +11,7 @@ Content-Type: application/json
 ###
 @token = {{login.response.body.token}}
 
-### List — search, sort, paginate
+### List: search, sort, paginate
 GET {{base}}/patients?search=ol&sortBy=dob&order=desc&page=1&limit=5
 Authorization: Bearer {{token}}
 

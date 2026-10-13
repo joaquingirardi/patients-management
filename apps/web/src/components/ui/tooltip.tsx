@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 
 export const TooltipProvider = TooltipPrimitive.Provider;
 
-/** Supplementary hints only — never the sole carrier of essential information. */
 export function Tooltip({
   content,
   children,

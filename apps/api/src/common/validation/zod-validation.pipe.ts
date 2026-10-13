@@ -4,8 +4,8 @@ import { type z } from 'zod';
 import { ValidationError } from '../errors/domain-errors';
 
 /**
- * Validates and *normalises* input with the shared contract schemas. Unknown keys are stripped,
- * so a client can never mass-assign server-owned fields such as `organizationId` or `version`.
+ * Validates and normalises input with the shared contract schemas. Unknown keys are stripped,
+ * so a client can't mass-assign server-owned fields such as `organizationId` or `version`.
  */
 export class ZodValidationPipe<TSchema extends z.ZodType> implements PipeTransform<
   unknown,

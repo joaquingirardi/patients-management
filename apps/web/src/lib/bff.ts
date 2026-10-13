@@ -42,10 +42,10 @@ export function isSameOriginRequest(request: NextRequest): boolean {
 }
 
 /**
- * The client address as reported by our *own* trusted proxies. Each trusted hop appends the
+ * The client address as reported by our own trusted proxies. Each trusted hop appends the
  * address it saw, so with N trusted hops the real client is the Nth entry from the right;
  * anything further left was written by the client and is ignored. With no trusted proxy the
- * header is entirely client-controlled, so nothing is forwarded — the API then rate-limits on
+ * header is entirely client-controlled, so nothing is forwarded and the API rate-limits on
  * the BFF's address plus, for logins, the target account (see the API's throttler config).
  */
 export function trustedClientIp(

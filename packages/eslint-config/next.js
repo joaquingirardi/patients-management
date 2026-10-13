@@ -9,7 +9,7 @@ import tseslint from 'typescript-eslint';
 import { base } from './base.js';
 
 /**
- * Next.js preset: React, hooks, Core Web Vitals and *strict* accessibility linting.
+ * Next.js preset: React, hooks, Core Web Vitals and strict accessibility linting.
  *
  * @param {{ tsconfigRootDir: string }} options
  */

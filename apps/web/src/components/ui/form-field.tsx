@@ -21,10 +21,7 @@ interface FormFieldProps {
   }) => React.ReactNode;
 }
 
-/**
- * Label + control + description + error, with all ARIA relationships wired up once, here,
- * instead of by hand in every form. Errors animate in and are announced by screen readers.
- */
+/** Label, control, description and error with the ARIA relationships wired up. */
 export function FormField({ label, description, error, className, children }: FormFieldProps) {
   const id = React.useId();
   const descriptionId = description ? `${id}-description` : undefined;

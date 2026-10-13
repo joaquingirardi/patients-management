@@ -12,7 +12,7 @@ describe('safeRedirectPath', () => {
     'https://evil.test',
     '//evil.test',
     '/\\evil.test',
-    '/\t/evil.test', // URL parsers strip tabs/newlines → "//evil.test"
+    '/\t/evil.test', // URL parsers strip tabs/newlines, giving "//evil.test"
     '/\n/evil.test',
     '/\t\\evil.test',
     'javascript:alert(1)',

@@ -6,8 +6,8 @@ import { Public } from '../auth/decorators/public.decorator';
 import { PrismaService } from '../database/prisma.service';
 
 /**
- * Liveness: the process is up. Readiness: it can serve traffic (database reachable).
- * Probes use the raw client, so chaos never makes an orchestrator kill a healthy container.
+ * Liveness: the process is up. Readiness: the database is reachable.
+ * Probes use the raw client so chaos doesn't get a healthy container restarted.
  */
 @Public()
 @SkipThrottle({ default: true, login: true, loginAccount: true })

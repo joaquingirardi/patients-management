@@ -9,8 +9,8 @@ export interface ChaosOptions {
 }
 
 /**
- * Raised *before* the query is sent — the simulated equivalent of failing to acquire a
- * connection. Because nothing reached the database, it is always safe to retry, even for writes.
+ * Raised before the query is sent (the simulated equivalent of failing to get a connection).
+ * Nothing reached the database, so it is safe to retry even for writes.
  */
 export class SimulatedDependencyFailure extends Error {
   readonly preExecution = true;
@@ -22,10 +22,9 @@ export class SimulatedDependencyFailure extends Error {
 }
 
 /**
- * Fault injection at the dependency boundary. The task asks to "randomly simulate latency and
- * occasional failures to demonstrate resilience"; injecting them *between the API and its
- * database* (rather than at the HTTP edge) lets us show resilience at both layers: the API
- * retries what is safe to retry, and the web app copes with whatever still gets through.
+ * Random latency and failures injected between the API and its database rather than at the
+ * HTTP edge, so the API's retries get exercised and the web app still sees the failures that
+ * get through.
  */
 export class Chaos {
   constructor(

@@ -6,7 +6,7 @@ export interface Session {
   /** Epoch milliseconds (server clock). */
   expiresAt: number;
   /**
-   * The server's clock when the session was read. Expiry is scheduled from the *difference*
+   * The server's clock when the session was read. Expiry is scheduled from the difference
    * (`expiresAt - serverNow`), so a client clock that is minutes or hours off cannot log the
    * user out on arrival or keep a dead session alive.
    */

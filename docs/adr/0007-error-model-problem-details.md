@@ -9,12 +9,12 @@ Clients need to branch on errors (show field errors, redirect on expired session
 
 ## Decision
 
-- Services throw **domain errors** (`NotFoundError`, `VersionConflictError`,
+- Services throw domain errors (`NotFoundError`, `VersionConflictError`,
   `DependencyUnavailableError`, …) and know nothing about HTTP.
-- A single global `ProblemDetailsFilter` maps them — and framework errors (malformed JSON, unknown
-  routes, throttling), Prisma errors and unknown exceptions — to
-  `application/problem+json` documents with: `type`, `title`, `status`, a stable **`code`**,
-  `detail`, `instance`, the **`requestId`** and, for validation, per-field **`errors`**.
+- A single global `ProblemDetailsFilter` maps them, along with framework errors (malformed JSON, unknown
+  routes, throttling), Prisma errors and unknown exceptions, to
+  `application/problem+json` documents with: `type`, `title`, `status`, a stable `code`,
+  `detail`, `instance`, the `requestId` and, for validation, per-field `errors`.
 - The code → status mapping is an exhaustive `Record<ErrorCode, …>`: adding a code without a
   mapping does not compile.
 - Unknown errors are logged with stack and request id, and returned as an opaque 500.

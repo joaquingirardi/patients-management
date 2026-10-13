@@ -10,16 +10,16 @@ import { APP_CONFIG, type AppConfig } from './config/app-config';
 import { buildOpenApiDocument } from './openapi/openapi.document';
 
 /**
- * Process-level HTTP setup shared by `main.ts` and the integration tests, so tests exercise
- * exactly the middleware stack that production runs. The app must be created with
- * `bodyParser: false`: parsing is registered here, *after* the request id is assigned.
+ * HTTP setup shared by `main.ts` and the integration tests, so tests run the same middleware
+ * stack as production. Create the app with `bodyParser: false`: parsing is registered here,
+ * after the request id is assigned.
  */
 export function configureApp(app: INestApplication): INestApplication {
   const config = app.get<AppConfig>(APP_CONFIG);
   const express = app as NestExpressApplication;
 
   express.use(requestId);
-  // Responses carry patient data (PHI): never let browsers or intermediaries cache them.
+  // Responses carry patient data, so browsers and intermediaries must never cache them.
   express.use(noStore);
   express.useLogger(app.get(Logger));
   // Trust exactly the configured number of proxy hops (the web BFF by default), never "any

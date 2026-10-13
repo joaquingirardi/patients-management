@@ -17,8 +17,8 @@ export function usePatientsList(query: ListPatientsQuery) {
   const result = useQuery({
     queryKey: patientKeys.list(query),
     queryFn: ({ signal }) => patientsApi.list(query, signal),
-    // While the next page/sort loads, keep showing the previous rows (dimmed) instead of a
-    // skeleton flash — the layout stays put and the interaction feels instant.
+    // Keep showing the previous rows (dimmed) while the next page/sort loads, instead of
+    // flashing the skeleton.
     placeholderData: keepPreviousData,
   });
 
@@ -32,7 +32,7 @@ export function usePatientsList(query: ListPatientsQuery) {
         queryKey: patientKeys.list(nextQuery),
         queryFn: ({ signal }) => patientsApi.list(nextQuery, signal),
       })
-      .catch(noop); // best effort: the real request will surface any error
+      .catch(() => undefined); // best effort: the real request will surface any error
   }, [data, query, queryClient]);
 
   return result;
@@ -41,7 +41,7 @@ export function usePatientsList(query: ListPatientsQuery) {
 export function usePatient(id: string) {
   const queryClient = useQueryClient();
   // Opening a row from the list renders instantly from the list cache. The seed is stamped with
-  // the *list's* fetch time, so it is revalidated as soon as it is older than `staleTime`.
+  // the list's fetch time, so it is revalidated as soon as it is older than `staleTime`.
   const seed = React.useMemo(() => findInLists(queryClient, id), [queryClient, id]);
   return useQuery({
     queryKey: patientKeys.detail(id),
@@ -61,14 +61,10 @@ export function usePrefetchPatient() {
           queryKey: patientKeys.detail(id),
           queryFn: ({ signal }) => patientsApi.get(id, signal),
         })
-        .catch(noop);
+        .catch(() => undefined);
     },
     [queryClient],
   );
-}
-
-function noop(): void {
-  // intentionally empty
 }
 
 function findInLists(

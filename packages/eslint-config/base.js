@@ -5,9 +5,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import tseslint from 'typescript-eslint';
 
 /**
- * Strict, type-aware baseline shared by every workspace.
- * Formatting is Prettier's job — `eslint-config-prettier` is applied last to switch off
- * every stylistic rule that could fight it.
+ * Type-aware baseline shared by every workspace.
  *
  * @param {{ tsconfigRootDir: string }} options
  */

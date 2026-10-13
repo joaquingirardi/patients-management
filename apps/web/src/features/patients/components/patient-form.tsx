@@ -31,11 +31,7 @@ interface PatientFormProps {
   onCancel: () => void;
 }
 
-/**
- * Validation is the *same Zod schema* the API enforces (from @pm/contracts), so the client
- * can never accept what the server rejects, nor reject what it accepts. Errors appear once a
- * field is touched, then update live as the user corrects them.
- */
+/** Validates with the same Zod schema as the API. Errors show once a field is touched. */
 export function PatientForm({
   defaultValues = EMPTY,
   submitLabel,

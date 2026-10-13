@@ -63,7 +63,7 @@ export class PatientsService {
     return { ok: true };
   }
 
-  /** Structured audit trail: who did what to which record. Ids only — never patient PII. */
+  /** Audit log entry: who did what to which record. Ids only, no patient PII. */
   private audit(event: string, actor: Actor, patientId: string): void {
     this.logger.log(
       { event, actorId: actor.userId, orgId: actor.organizationId, patientId },

@@ -15,13 +15,13 @@ The Next.js server acts as a thin **BFF**:
 
 - `POST /api/auth/login` forwards credentials to the API and stores the JWT in an
   **httpOnly, SameSite=Lax, Secure (in production)** cookie whose lifetime equals the token's.
-  The browser receives only `{ user, expiresAt }` — JavaScript can never read the token.
+  The browser receives only `{ user, expiresAt }`; JavaScript never sees the token.
 - `/api/proxy/patients…` attaches `Authorization: Bearer <cookie>` and streams the API response
   back unchanged. It is an **allowlist** (only the patients resource), not an open relay.
 - **CSRF:** state-changing requests must prove same-origin via Fetch Metadata
   (`Sec-Fetch-Site: same-origin`) or a matching `Origin`, on top of `SameSite=Lax`.
-- `proxy.ts` (Next.js 16's middleware) decodes — but does not verify — the claims for UX
-  routing: unauthenticated or expired → `/login?next=…&reason=expired`.
+- `proxy.ts` (Next.js 16's middleware) decodes the claims for UX routing but does not verify
+  them: unauthenticated or expired → `/login?next=…&reason=expired`.
 - Expiry is handled proactively (a timer at `exp`, with a one-minute warning) and reactively
   (any 401 from the API ends the session and redirects). The query cache is cleared on sign-out.
 - The API remains the **only authority**: it verifies signature, algorithm (pinned HS256),

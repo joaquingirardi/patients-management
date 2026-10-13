@@ -1,10 +1,8 @@
 # syntax=docker/dockerfile:1.7
-# ─────────────────────────────────────────────────────────────────────────────
 # Web image. Build context: repository root.
 #   docker build -f apps/web/Dockerfile -t patients-web .
-# Uses Next.js `output: 'standalone'`: the runtime stage ships only the traced
-# server files — no node_modules install, no source, no dev dependencies.
-# ─────────────────────────────────────────────────────────────────────────────
+# Uses Next.js `output: 'standalone'`, so the runtime stage only ships the traced
+# server files (no node_modules install, source or dev dependencies).
 ARG NODE_VERSION=22-alpine
 
 FROM node:${NODE_VERSION} AS base

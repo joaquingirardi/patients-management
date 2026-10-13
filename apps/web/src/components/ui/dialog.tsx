@@ -27,10 +27,7 @@ export function DialogOverlay({
   );
 }
 
-/**
- * Centered card on larger screens, a bottom sheet on phones (thumb-reachable, more room
- * for the on-screen keyboard). Focus trapping, Escape and scroll locking come from Radix.
- */
+/** Centered card on larger screens, bottom sheet on phones (leaves room for the keyboard). */
 export function DialogContent({
   className,
   children,

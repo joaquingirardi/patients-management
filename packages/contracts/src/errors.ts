@@ -1,8 +1,6 @@
 import { z } from 'zod';
 
-/**
- * Machine-readable error codes. Clients branch on `code`, never on human-readable text.
- */
+/** Machine-readable error codes. Clients branch on `code`, not on the message text. */
 export const ErrorCode = {
   BadRequest: 'BAD_REQUEST',
   ValidationFailed: 'VALIDATION_FAILED',
@@ -14,7 +12,7 @@ export const ErrorCode = {
   VersionConflict: 'VERSION_CONFLICT',
   RateLimited: 'RATE_LIMITED',
   ServiceUnavailable: 'SERVICE_UNAVAILABLE',
-  /** A write lost its connection mid-flight: it may or may not have been applied. Do not blindly retry. */
+  /** A write lost its connection mid-flight and may or may not have been applied. */
   OutcomeUnknown: 'OUTCOME_UNKNOWN',
   Internal: 'INTERNAL',
 } as const;
@@ -43,9 +41,8 @@ export const FieldErrorSchema = z.object({
 export type FieldError = z.infer<typeof FieldErrorSchema>;
 
 /**
- * Every non-2xx response body is an RFC 9457 "Problem Details" document
- * (`Content-Type: application/problem+json`), extended with a stable `code`,
- * the `requestId` for log correlation and optional per-field `errors`.
+ * Body of every non-2xx response: RFC 9457 Problem Details (`application/problem+json`) plus a
+ * stable `code`, the `requestId` for log correlation and optional per-field `errors`.
  */
 export const ProblemDetailsSchema = z.object({
   type: z.string(),

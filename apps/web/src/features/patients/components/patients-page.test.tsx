@@ -96,7 +96,7 @@ describe('PatientsPage', () => {
     server.use(http.get('*/api/proxy/patients', unavailable, { once: true }));
     const { user } = renderWithProviders(<PatientsPage />);
 
-    expect(await screen.findByText('Couldn’t load patients')).toBeInTheDocument();
+    expect(await screen.findByText("Couldn't load patients")).toBeInTheDocument();
     expect(screen.getByText('req-test-123')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByRole('table')).toBeInTheDocument();
@@ -113,7 +113,7 @@ describe('PatientsPage', () => {
       await user.click(screen.getByRole('button', { name: 'Delete patient' }));
 
       // Rolled back: the row is back and the user is told why, with a retry action.
-      expect(await screen.findByText('Couldn’t delete Frances Allen')).toBeInTheDocument();
+      expect(await screen.findByText("Couldn't delete Frances Allen")).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
       expect(rowFor(/Allen, Frances/)).toBeInTheDocument();
       expect(db.patients).toHaveLength(12);
@@ -134,7 +134,7 @@ describe('PatientsPage', () => {
       expect(db.patients).toHaveLength(11);
     });
 
-    it('shows a created patient instantly as "Saving…", then the confirmed row', async () => {
+    it('shows a created patient instantly as "Saving...", then the confirmed row', async () => {
       let release: () => void = () => undefined;
       server.use(
         http.post(
@@ -184,7 +184,7 @@ describe('PatientsPage', () => {
       expect(rowFor(/Allen, Frances/)).toBeInTheDocument();
       expect(screen.queryByText('Allen-Smith, Frances')).not.toBeInTheDocument();
 
-      // "Review" must load the *latest* version — resubmitting now succeeds instead of 409-ing forever.
+      // "Review" must load the latest version, so resubmitting now succeeds instead of 409-ing again.
       await user.click(screen.getByRole('button', { name: 'Review' }));
       const review = await screen.findByRole('dialog');
       const reviewLastName = within(review).getByLabelText('Last name');
@@ -219,7 +219,7 @@ describe('PatientsPage', () => {
       await user.click(screen.getByRole('menuitem', { name: 'Delete' }));
       await user.click(screen.getByRole('button', { name: 'Delete patient' }));
 
-      expect(await screen.findByText('Couldn’t delete Frances Allen')).toBeInTheDocument();
+      expect(await screen.findByText("Couldn't delete Frances Allen")).toBeInTheDocument();
       expect(rowFor(/Allen, Frances/)).toBeInTheDocument();
       // A whole-cache snapshot restore would have resurrected B here.
       expect(

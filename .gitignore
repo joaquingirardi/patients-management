@@ -34,3 +34,8 @@ blob-report/
 
 # next.js generated
 next-env.d.ts
+
+# vercel cli
+.vercel/
+.vercel
+.env*

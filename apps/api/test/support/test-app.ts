@@ -21,7 +21,7 @@ const TEST_ENV = {
   DB_RETRY_BASE_DELAY_MS: '1',
 };
 
-/** A controllable stand-in for the random chaos source: fail the next N queries, deterministically. */
+/** Deterministic stand-in for Chaos: fails the next N queries. */
 export class ChaosController {
   private remainingFailures = 0;
   attempts = 0;

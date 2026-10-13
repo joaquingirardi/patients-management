@@ -5,9 +5,9 @@ import type { NextFunction, Request, Response } from 'express';
 const REQUEST_ID = /^[\w-]{8,64}$/;
 
 /**
- * Assigns the request id before *anything* else runs (including body parsing), so even a
+ * Assigns the request id before anything else runs (including body parsing), so even a
  * malformed-JSON 400 carries an id that matches the log line. A well-formed incoming
- * `x-request-id` (e.g. from the web BFF) is propagated; anything else is replaced.
+ * `x-request-id` (e.g. from the web BFF) is kept; anything else is replaced.
  */
 export function requestId(req: Request & { id?: string }, res: Response, next: NextFunction): void {
   const incoming = req.headers['x-request-id'];

@@ -1,7 +1,7 @@
 {
   "name": "patients-management",
   "private": true,
-  "description": "Role-aware patients management system \u2014 Next.js + NestJS + PostgreSQL monorepo.",
+  "description": "Role-aware patients management system: Next.js + NestJS + PostgreSQL monorepo.",
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.9.0",
   "engines": {

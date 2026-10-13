@@ -8,7 +8,7 @@ test.describe('patients lifecycle (admin)', () => {
     'The full CRUD journey runs on desktop; mobile is covered by a11y + layout checks.',
   );
 
-  test('create → find → view → edit → delete', async ({ page }) => {
+  test('create, search, view, edit, delete', async ({ page }) => {
     // Unique per run, letters only (names reject digits by design).
     const lastName = `Zeta${Date.now()
       .toString(26)
@@ -32,7 +32,7 @@ test.describe('patients lifecycle (admin)', () => {
     const row = page.getByRole('row', { name: new RegExp(`${lastName}, Hedy`) });
     await expect(row).toBeVisible();
 
-    // View (intercepted route → modal), then close back to the list with state intact
+    // View (intercepted route, so a modal), then close back to the list with state intact
     await row.getByRole('link').click();
     const details = page.getByRole('dialog');
     await expect(details.getByRole('heading', { name: `Hedy ${lastName}` })).toBeVisible();

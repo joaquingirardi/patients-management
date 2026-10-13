@@ -15,8 +15,8 @@ import { usePatientsSearchParams } from '../lib/use-patients-search-params';
 
 /*
  * Write-only UI is code-split: the form dialog (react-hook-form, the resolver, the form itself) and
- * the delete confirmation load as separate chunks *after* first paint, and only for users who can
- * write. Viewers never download them; admins get them before they can click anything.
+ * the delete confirmation load as separate chunks after first paint, and only for users who can
+ * write.
  */
 const PatientFormDialog = dynamic(
   () => import('./patient-form-dialog').then((m) => m.PatientFormDialog),
@@ -40,9 +40,9 @@ interface PatientActions {
 const PatientActionsContext = React.createContext<PatientActions | null>(null);
 
 /**
- * Owns the create/edit/delete dialogs and their mutations, so any surface — table row, mobile
- * card, details modal, details page — triggers the same flow with one call. Dialogs close
- * immediately on submit: the optimistic cache update *is* the feedback.
+ * Owns the create/edit/delete dialogs and their mutations, so the table row, mobile card,
+ * details modal and details page all trigger the same flow. Dialogs close immediately on
+ * submit because the optimistic cache update already shows the result.
  */
 export function PatientActionsProvider({ children }: { children: React.ReactNode }) {
   const { query } = usePatientsSearchParams();

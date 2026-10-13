@@ -5,10 +5,8 @@ import { APP_CONFIG, type AppConfig } from '../config/app-config';
 
 @Injectable()
 export class PasswordHasher {
-  /**
-   * Compared against when the email is unknown, so "no such user" and "wrong password"
-   * take the same time — response timing cannot be used to enumerate accounts.
-   */
+  // Compared against when the email is unknown, so "no such user" and "wrong password" take
+  // the same time and response timing can't be used to enumerate accounts.
   private readonly dummyHash: string;
 
   constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {

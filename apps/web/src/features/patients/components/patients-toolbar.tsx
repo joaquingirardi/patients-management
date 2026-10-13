@@ -28,11 +28,11 @@ interface PatientsToolbarProps {
 export function PatientsToolbar({ query, onSearch, onSort }: PatientsToolbarProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [value, setValue] = React.useState(query.search ?? '');
-  // The last term *we* pushed to the URL. When the URL catches up with it, the input must be
+  // The last term we pushed to the URL. When the URL catches up with it, the input must be
   // left alone: the user may have typed more (or a trailing space) while the update was in flight.
   const [sent, setSent] = React.useState(query.search ?? '');
 
-  // Adopt only *external* URL changes (back button, "Clear search" in the empty state).
+  // Adopt only external URL changes (back button, "Clear search" in the empty state).
   const [observed, setObserved] = React.useState(query.search);
   if (observed !== query.search) {
     setObserved(query.search);
@@ -42,7 +42,7 @@ export function PatientsToolbar({ query, onSearch, onSort }: PatientsToolbarProp
     }
   }
 
-  // Debounce keystrokes → URL. Typing never triggers one request per character.
+  // Debounce writing the search term to the URL.
   React.useEffect(() => {
     const term = value.trim();
     if (term === sent) return;
@@ -53,7 +53,7 @@ export function PatientsToolbar({ query, onSearch, onSort }: PatientsToolbarProp
     return () => clearTimeout(timer);
   }, [value, sent, onSearch]);
 
-  // "/" focuses search from anywhere — unless the user is typing, using a shortcut, or a dialog
+  // "/" focuses search from anywhere, unless the user is typing, using a shortcut, or a dialog
   // (with its focus trap) is open.
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {

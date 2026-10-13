@@ -1,9 +1,8 @@
 import { ErrorCode, type FieldError } from '@pm/contracts';
 
 /**
- * Services speak in domain errors, never in HTTP. The ProblemDetailsFilter is the single
- * place that translates them into status codes, so the core stays transport-agnostic
- * (the same service could sit behind a queue consumer or a GraphQL resolver).
+ * Services throw domain errors, not HTTP exceptions. ProblemDetailsFilter maps them to status
+ * codes, so services don't depend on the transport.
  */
 export abstract class DomainError extends Error {
   abstract readonly code: ErrorCode;
@@ -74,8 +73,8 @@ export class DependencyUnavailableError extends DomainError {
 }
 
 /**
- * A write lost its database connection mid-flight: it may or may not have been applied.
- * Unlike DependencyUnavailableError this carries no Retry-After — clients should re-read first.
+ * A write lost its database connection mid-flight, so it may or may not have been applied.
+ * Unlike DependencyUnavailableError there is no Retry-After: clients should re-read first.
  */
 export class OutcomeUnknownError extends DomainError {
   readonly code = ErrorCode.OutcomeUnknown;

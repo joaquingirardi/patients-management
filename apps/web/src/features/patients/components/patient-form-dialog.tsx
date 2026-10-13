@@ -35,7 +35,7 @@ export function PatientFormDialog({
           <DialogTitle>{isEdit ? 'Edit patient' : 'New patient'}</DialogTitle>
           <DialogDescription>
             {patient
-              ? `Update ${fullName(patient)}’s details. All fields are required.`
+              ? `Update ${fullName(patient)}'s details. All fields are required.`
               : 'Add a patient to your organization. All fields are required.'}
           </DialogDescription>
         </DialogHeader>

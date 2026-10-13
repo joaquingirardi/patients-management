@@ -13,14 +13,14 @@ multi-tenant: a user must never see another organization's patients, which no ro
 
 Three layers, each enforcing something the others cannot:
 
-1. **Policy as data.** Roles map to permissions (`patients:read`, `patients:write`) in
-   `@pm/contracts`. Both the API and the UI read the same map — the UI can never offer an action
-   the API will refuse, and vice versa.
-2. **Edge enforcement (HTTP).** Global guards, **deny by default**: `JwtAuthGuard` (→ 401) runs
+1. Policy as data. Roles map to permissions (`patients:read`, `patients:write`) in
+   `@pm/contracts`. Both the API and the UI read the same map, so the UI does not offer actions
+   the API would refuse.
+2. Edge enforcement (HTTP). Global guards, deny by default: `JwtAuthGuard` (→ 401) runs
    on every route unless `@Public()`; `PermissionsGuard` (→ 403) enforces `@RequirePermissions`.
-3. **Data-access enforcement.** Services call `authorize(actor, permission)` again (defence in
-   depth for non-HTTP callers), and every `PatientsRepository` method **requires a
-   `TenantScope`**. All queries are built on `visibleIn(scope)` =
+3. Data-access enforcement. Services call `authorize(actor, permission)` again (defence in
+   depth for non-HTTP callers), and every `PatientsRepository` method requires a
+   `TenantScope`. All queries are built on `visibleIn(scope)` =
    `{ organizationId, deletedAt: null }`. There is no method that can touch a patient without
    naming its organization.
 
@@ -30,10 +30,10 @@ indistinguishable from one that does not exist, so ids cannot be probed. Server-
 
 ## Alternatives considered
 
-- **Postgres Row-Level Security.** The strongest guarantee, but requires setting a session
-  variable per transaction through Prisma's pool — more moving parts than this scope warrants.
+- Postgres Row-Level Security. The strongest guarantee, but requires setting a session
+  variable per transaction through Prisma's pool, which is more moving parts than this scope needs.
   The repository-scope pattern is a stepping stone: the same `TenantScope` would feed RLS.
-- **CASL / policy engines.** Powerful for attribute-based rules; overkill for two permissions.
+- CASL / policy engines. Powerful for attribute-based rules; overkill for two permissions.
 
 ## Consequences
 

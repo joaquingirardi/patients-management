@@ -15,7 +15,7 @@ interface SortableHeaderProps {
   className?: string;
 }
 
-/** `aria-sort` on the header + a real button inside: the sort state is announced, not just drawn. */
+/** `aria-sort` on the header plus a real button inside, so screen readers announce the sort. */
 export function SortableHeader({
   field,
   label,

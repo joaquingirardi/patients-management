@@ -4,8 +4,8 @@ import { isExpired, readClaims, SESSION_COOKIE } from '@/lib/session/claims';
 
 /**
  * Route protection at the edge of the app (Next.js 16 "proxy", formerly middleware):
- *  - no / expired session  → /login?next=<where you were going>[&reason=expired]
- *  - signed in and on /login → /patients
+ *  - no / expired session: redirect to /login?next=<where you were going>[&reason=expired]
+ *  - signed in and on /login: redirect to /patients
  * This is a UX gate; the API independently authorizes every data request.
  */
 export function proxy(request: NextRequest): NextResponse {

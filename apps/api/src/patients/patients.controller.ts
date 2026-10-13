@@ -32,10 +32,6 @@ import { PatientsService } from './patients.service';
 
 const IdParam = new ZodValidationPipe(PatientIdParam, 'id');
 
-/**
- * Thin by design: parse & validate input with the shared contract, declare the permission,
- * delegate to the service. No business logic lives here.
- */
 @Controller('patients')
 @SkipThrottle({ login: true, loginAccount: true })
 export class PatientsController {

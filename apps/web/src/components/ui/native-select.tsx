@@ -3,10 +3,7 @@ import type * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-/**
- * A styled *native* <select>. For short option lists it beats a custom listbox on every axis
- * that matters here: screen-reader support, mobile pickers, keyboard behaviour and bundle size.
- */
+/** Styled native <select>: better screen-reader, mobile and keyboard support than a custom listbox. */
 export function NativeSelect({ className, children, ...props }: React.ComponentProps<'select'>) {
   return (
     <div className={cn('relative inline-flex', className)}>

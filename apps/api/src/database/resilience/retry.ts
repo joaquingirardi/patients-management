@@ -15,9 +15,8 @@ export const sleep = (ms: number) =>
   });
 
 /**
- * Retries `operation` while `shouldRetry` approves, with exponential backoff and *full jitter*
- * (delay = random(0, cap)). Jitter spreads retries of concurrent requests apart so a struggling
- * dependency is not hit by synchronized waves of retries (the "thundering herd").
+ * Retries `operation` while `shouldRetry` approves, with exponential backoff and full jitter
+ * (delay = random(0, cap)) so concurrent requests don't retry in lockstep.
  */
 export async function retry<T>(
   operation: (attempt: number) => Promise<T>,

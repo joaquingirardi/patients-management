@@ -31,11 +31,12 @@ flowchart LR
   K -. imported by .-> C
 ```
 
-**Why this shape:** the browser never holds the token (ADR 0002); authorization is enforced at the
-edge _and_ in data access (ADR 0003); the flaky dependency is simulated where real ones live,
-behind the repositories (ADR 0004); one contract package keeps both sides honest (ADR 0001).
+The browser never holds the token (ADR 0002). Authorization is enforced both at the edge and in
+data access (ADR 0003). The flaky dependency is simulated behind the repositories, where a real
+database would fail (ADR 0004). Both apps import their request and response schemas from one
+contract package (ADR 0001).
 
-## Request lifecycle — `PUT /patients/:id`
+## Request lifecycle: `PUT /patients/:id`
 
 ```mermaid
 sequenceDiagram
@@ -85,7 +86,7 @@ openapi/          OpenAPI document generated from @pm/contracts → Swagger UI a
 health/           liveness + readiness (raw client: never affected by chaos)
 ```
 
-Rules of the road:
+Layering:
 
 - **Controllers** parse/validate and delegate. **Services** own business rules and authorization
   and throw domain errors. **Repositories** own queries and require a `TenantScope`.
@@ -148,14 +149,14 @@ erDiagram
 Tokens live in [`apps/web/src/app/globals.css`](../apps/web/src/app/globals.css) and are exposed
 to Tailwind v4 via `@theme`:
 
-| Layer     | Tokens                                                                                                                                                                                |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Colour    | semantic only — `background/foreground`, `primary`, `success`, `warning`, `destructive`, `info`, `muted`, each with `-foreground` / `-subtle` pairs; OKLCH, AA contrast, light + dark |
-| Type      | Geist Sans/Mono; h1 24→28px tight, body 14–16px relaxed; `tabular-nums` for dates & phones                                                                                            |
-| Space     | Tailwind 4px scale; page gutter 16→24px; vertical rhythm in 4/6/8 steps                                                                                                               |
-| Radius    | one `--radius` knob → `sm/md/lg/xl`                                                                                                                                                   |
-| Elevation | `shadow-xs` controls → `sm` cards → `md` menus → `lg` dialogs, hue-tinted                                                                                                             |
-| Motion    | 150–300 ms, ease-out-quart; dialogs scale/fade (sheet on phones); `prefers-reduced-motion` honoured globally                                                                          |
+| Layer     | Tokens                                                                                                                                                                               |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Colour    | semantic only: `background/foreground`, `primary`, `success`, `warning`, `destructive`, `info`, `muted`, each with `-foreground` / `-subtle` pairs; OKLCH, AA contrast, light + dark |
+| Type      | Geist Sans/Mono; h1 24→28px tight, body 14–16px relaxed; `tabular-nums` for dates & phones                                                                                           |
+| Space     | Tailwind 4px scale; page gutter 16→24px; vertical rhythm in 4/6/8 steps                                                                                                              |
+| Radius    | one `--radius` knob → `sm/md/lg/xl`                                                                                                                                                  |
+| Elevation | `shadow-xs` controls → `sm` cards → `md` menus → `lg` dialogs, hue-tinted                                                                                                            |
+| Motion    | 150–300 ms, ease-out-quart; dialogs scale/fade (sheet on phones); `prefers-reduced-motion` honoured globally                                                                         |
 
 Responsive table: **≥ lg** all columns · **md** email folds under the name, phone hidden ·
 **< md** stacked cards with large touch targets and an explicit sort control.

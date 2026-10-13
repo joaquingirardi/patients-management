@@ -28,7 +28,7 @@ export default defineConfig({
         'src/app/**/{layout,page,loading,error,not-found,global-error,default}.tsx',
       ],
       reporter: ['text-summary', 'html'],
-      // Ratchet: UI shells without logic are covered by Playwright, so the unit bar is lower.
+      // UI shells without logic are covered by Playwright instead.
       thresholds: { statements: 70, branches: 80, functions: 60, lines: 70 },
     },
   },

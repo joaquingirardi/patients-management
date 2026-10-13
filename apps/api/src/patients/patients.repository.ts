@@ -10,10 +10,9 @@ export type UpdateResult =
   { status: 'updated'; patient: PatientEntity } | { status: 'not_found' } | { status: 'conflict' };
 
 /**
- * Authorization as data access: every method takes a TenantScope and every query is built on
- * `visibleIn(scope)`. There is no code path that can read or write a patient without naming the
- * organization it belongs to — a patient of another tenant is indistinguishable from one that
- * does not exist (404, never 403, so ids cannot be probed).
+ * Every method takes a TenantScope and every query is built on `visibleIn(scope)`, so a patient
+ * can't be read or written without naming its organization. Another tenant's patient looks the
+ * same as a missing one (404, not 403, so ids can't be probed).
  */
 @Injectable()
 export class PatientsRepository {
@@ -61,8 +60,8 @@ export class PatientsRepository {
 
   /**
    * Optimistic concurrency: when the client sends a version, the row is only updated if it still
-   * has that version. The check and the write are one atomic SQL statement — no read-modify-write
-   * race. Without a version (a plain contract `Patient` body) the update is unconditional.
+   * has that version. The check and the write are a single SQL statement, so there is no
+   * read-modify-write race. Without a version the update is unconditional.
    */
   async update(
     scope: TenantScope,
@@ -86,7 +85,7 @@ export class PatientsRepository {
     }
   }
 
-  /** Soft delete: clinical records are retained for audit; they simply stop being visible. */
+  /** Soft delete: clinical records are kept for audit and just stop being visible. */
   async softDelete(scope: TenantScope, actorId: string, id: string): Promise<boolean> {
     const { count } = await this.db.patient.updateMany({
       where: { id, ...visibleIn(scope) },
@@ -107,10 +106,8 @@ function toColumns(input: PatientInput) {
   return { ...input, dob: fromDateOnly(input.dob) };
 }
 
-/**
- * Multi-term search: every whitespace-separated term must match first name, last name or email
- * (case-insensitive, substring). "ada love" finds Ada Lovelace. Backed by pg_trgm GIN indexes.
- */
+// Every whitespace-separated term must match first name, last name or email (case-insensitive
+// substring), so "ada love" finds Ada Lovelace. Backed by pg_trgm GIN indexes.
 function searchFilter(search: string | undefined): Prisma.PatientWhereInput {
   const terms = search?.split(/\s+/).filter(Boolean).slice(0, 5) ?? [];
   if (terms.length === 0) return {};
@@ -123,7 +120,7 @@ function searchFilter(search: string | undefined): Prisma.PatientWhereInput {
   };
 }
 
-/** Deterministic ordering: the trailing `id` tie-breaker keeps pages stable across requests. */
+// The trailing `id` tie-breaker keeps pages stable across requests.
 function orderBy({ sortBy, order }: ListPatientsQuery): Prisma.PatientOrderByWithRelationInput[] {
   switch (sortBy) {
     case 'lastName':

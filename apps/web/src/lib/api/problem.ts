@@ -5,10 +5,7 @@ import {
   ProblemDetailsSchema,
 } from '@pm/contracts';
 
-/**
- * Every failed request becomes an ApiError carrying the server's Problem Details, so UI code
- * branches on stable `code`s and can show field errors and a support reference (`requestId`).
- */
+/** A failed request, carrying the server's Problem Details (stable `code`, field errors, `requestId`). */
 export class ApiError extends Error {
   readonly status: number;
   readonly code: ErrorCode;
@@ -26,7 +23,7 @@ export class ApiError extends Error {
     this.retryAfterSeconds = retryAfterSeconds;
   }
 
-  /** Network down, DNS, CORS, aborted proxy… — the request never produced an HTTP response. */
+  /** The request never produced an HTTP response (network down, DNS, CORS, aborted proxy...). */
   static network(): ApiError {
     return new ApiError({
       type: 'about:blank',
@@ -50,7 +47,7 @@ export async function toApiError(response: Response): Promise<ApiError> {
     const parsed = ProblemDetailsSchema.safeParse(await response.json());
     if (parsed.success) return new ApiError(parsed.data, retryAfterSeconds);
   } catch {
-    // Non-JSON error body (e.g. an HTML 502 from a load balancer) — fall through.
+    // Non-JSON error body, e.g. an HTML 502 from a load balancer. Fall through.
   }
   return new ApiError(
     {

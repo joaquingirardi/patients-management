@@ -1,9 +1,6 @@
 import { type ListPatientsQuery } from '@pm/contracts';
 
-/**
- * Hierarchical query keys: invalidating `patientKeys.lists()` refreshes every list variant
- * (any page, sort or search) without touching cached detail records, and vice versa.
- */
+/** Invalidating `patientKeys.lists()` refreshes every page/sort/search but leaves details alone. */
 export const patientKeys = {
   all: ['patients'] as const,
   lists: () => [...patientKeys.all, 'list'] as const,

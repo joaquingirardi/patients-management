@@ -11,11 +11,8 @@ import {
 } from '@pm/contracts';
 import { z } from 'zod';
 
-/*
- * The module's DTOs. Each one *is* a schema from @pm/contracts (ADR 0001): naming them here gives
- * the module the conventional Nest shape without creating a second source of truth. Every DTO is
- * both a runtime validator (the value, used by ZodValidationPipe) and a type (same name).
- */
+// Each DTO is a schema from @pm/contracts (ADR 0001), re-exported under the usual Nest names.
+// The value is the validator used by ZodValidationPipe; the type has the same name.
 
 export const CreatePatientDto = PatientInputSchema;
 export type CreatePatientDto = PatientInput;

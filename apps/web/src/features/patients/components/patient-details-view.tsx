@@ -49,7 +49,7 @@ function DetailsBody({
     return (
       <ErrorState
         error={error}
-        title="Couldn’t load this patient"
+        title="Couldn't load this patient"
         onRetry={() => void refetch()}
         retrying={isFetching}
       />

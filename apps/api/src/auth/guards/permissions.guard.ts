@@ -6,7 +6,7 @@ import { authorize } from '../actor';
 import { REQUIRED_PERMISSIONS } from '../decorators/require-permissions.decorator';
 import { type AuthenticatedRequest } from './jwt-auth.guard';
 
-/** Global guard, runs after JwtAuthGuard: authenticated but not allowed → 403. */
+/** Global guard, runs after JwtAuthGuard: authenticated but not allowed gets a 403. */
 @Injectable()
 export class PermissionsGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
@@ -19,7 +19,7 @@ export class PermissionsGuard implements CanActivate {
     if (!required?.length) return true;
 
     const { actor } = context.switchToHttp().getRequest<AuthenticatedRequest>();
-    if (!actor) return true; // public route — nothing to authorize against
+    if (!actor) return true; // public route, nothing to authorize against
     for (const permission of required) authorize(actor, permission);
     return true;
   }

@@ -9,11 +9,11 @@ What forces are at play? What problem are we solving, and what constraints apply
 
 ## Decision
 
-What we do. Concrete enough that a reviewer can check the code against it.
+What we do, concretely enough that the code can be checked against it.
 
 ## Alternatives considered
 
-- **Option** — why it lost.
+- Option: why it lost.
 
 ## Consequences
 

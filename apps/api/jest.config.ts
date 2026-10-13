@@ -1,16 +1,10 @@
 import type { Config } from 'jest';
 
-/**
- * Two projects with different trade-offs:
- *  - unit:        pure, in-memory, milliseconds — runs on every save.
- *  - integration: the real HTTP stack against a real PostgreSQL (Testcontainers) — proves the
- *                 contract, the SQL, the guards and the error mapping actually work together.
- */
 const shared = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'js', 'json'],
-  // Test against contract *source* so tests never depend on a stale build of the package.
+  // Resolve contracts to source so tests don't depend on a stale build of the package.
   moduleNameMapper: { '^@pm/contracts$': '<rootDir>/../../packages/contracts/src' },
 } satisfies Config;
 
@@ -22,7 +16,6 @@ const config: Config = {
     '!src/database/seed.ts',
   ],
   coverageDirectory: 'coverage',
-  // Ratchet: the build fails if coverage drops below today's level (measured 97% lines).
   coverageThreshold: { global: { statements: 90, branches: 70, functions: 90, lines: 90 } },
   projects: [
     {

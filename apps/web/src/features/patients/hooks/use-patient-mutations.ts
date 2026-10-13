@@ -29,9 +29,9 @@ export const isOptimistic = (patient: Pick<Patient, 'id'>) =>
   patient.id.startsWith(OPTIMISTIC_ID_PREFIX);
 
 /*
- * Cache surgery helpers. Rollbacks are *targeted inverse operations* on the affected row, never
- * "restore the whole cache from a snapshot": with several mutations in flight (delete A, then
- * delete B), restoring A's snapshot would resurrect B while B's delete is still pending.
+ * Cache helpers. Rollbacks undo the change on the affected row only, rather than restoring the
+ * whole cache from a snapshot: with several mutations in flight (delete A, then delete B),
+ * restoring A's snapshot would resurrect B while B's delete is still pending.
  */
 function updateLists(queryClient: QueryClient, update: (list: PatientList) => PatientList): void {
   queryClient.setQueriesData<PatientList>({ queryKey: patientKeys.lists() }, (list) =>
@@ -80,21 +80,21 @@ function reinsertRow(queryClient: QueryClient, patient: Patient, positions: RowP
 }
 
 /**
- * A write whose outcome is unknown (connection lost mid-flight) must not be blindly retried —
- * it may already have been applied. Show the truth instead: refetch, and say so.
+ * A write whose outcome is unknown (connection lost mid-flight) must not be blindly retried,
+ * since it may already have been applied. Refetch and tell the user instead.
  */
 function handleOutcomeUnknown(queryClient: QueryClient, error: unknown): boolean {
   if (!isApiError(error, ErrorCode.OutcomeUnknown)) return false;
   void queryClient.invalidateQueries({ queryKey: patientKeys.all });
-  toast.warning('We couldn’t confirm that change', {
+  toast.warning("We couldn't confirm that change", {
     description:
-      'The connection dropped while saving. The list has been refreshed — check it before trying again.',
+      'The connection dropped while saving. The list has been refreshed, so check it before trying again.',
   });
   return true;
 }
 
 /**
- * Revalidate only when the *last* in-flight patients mutation settles. Refetching earlier would
+ * Revalidate only when the last in-flight patients mutation settles. Refetching earlier would
  * pull server state that does not yet include the other pending changes, briefly undoing their
  * optimistic updates (e.g. a row whose delete is still in flight would reappear).
  */
@@ -109,10 +109,7 @@ function revalidateWhenIdle(
 const describe = (error: unknown) =>
   isApiError(error) ? error.message : 'Something went wrong. Please try again.';
 
-/**
- * Keeps the latest `mutate` reachable from toast actions created in earlier renders,
- * so "Retry" always re-runs the mutation through the current hook instance.
- */
+// Toast actions are created in earlier renders; this keeps "Retry" pointing at the current `mutate`.
 function useLatest<T>(value: T) {
   const ref = React.useRef(value);
   React.useEffect(() => {
@@ -121,11 +118,6 @@ function useLatest<T>(value: T) {
   return ref;
 }
 
-/**
- * Optimistic create: the row appears at the top of the list the user is looking at, dimmed
- * and marked "Saving…", before the server answers. On failure exactly that row is removed and
- * the toast offers a one-click retry with the same data.
- */
 export function useCreatePatient(listQuery: ListPatientsQuery) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -160,7 +152,7 @@ export function useCreatePatient(listQuery: ListPatientsQuery) {
     onError: (error, input, context) => {
       if (context) removeRow(queryClient, context.optimisticId);
       if (handleOutcomeUnknown(queryClient, error)) return;
-      toast.error(`Couldn’t add ${fullName(input)}`, {
+      toast.error(`Couldn't add ${fullName(input)}`, {
         description: describe(error),
         action: { label: 'Retry', onClick: () => latest.current(input) },
       });
@@ -172,9 +164,9 @@ export function useCreatePatient(listQuery: ListPatientsQuery) {
 }
 
 /**
- * Optimistic update with optimistic *concurrency*: the edit shows immediately; if someone else
- * saved first the server answers 409, we revert the row, fetch the latest version and let the
- * user review it — instead of silently overwriting their colleague's change.
+ * Optimistic update with optimistic concurrency: the edit shows immediately. If someone else
+ * saved first the server answers 409, so we revert the row, fetch the latest version and let the
+ * user review it rather than overwrite their colleague's change.
  */
 export function useUpdatePatient({ onConflict }: { onConflict?: (latest: Patient) => void } = {}) {
   const queryClient = useQueryClient();
@@ -203,8 +195,7 @@ export function useUpdatePatient({ onConflict }: { onConflict?: (latest: Patient
       if (handleOutcomeUnknown(queryClient, error)) return;
 
       if (isApiError(error, ErrorCode.VersionConflict)) {
-        // Bypass the cache on purpose: the cached detail is exactly the stale version that
-        // caused the conflict. Reviewing it again would conflict again, forever.
+        // Bypass the cache: the cached detail is the stale version that caused the conflict.
         const latest = await patientsApi.get(variables.id).catch(() => undefined);
         if (latest) {
           queryClient.setQueryData(patientKeys.detail(latest.id), latest);
@@ -225,7 +216,7 @@ export function useUpdatePatient({ onConflict }: { onConflict?: (latest: Patient
         });
         return;
       }
-      toast.error('Couldn’t save changes', {
+      toast.error("Couldn't save changes", {
         description: describe(error),
         action: { label: 'Retry', onClick: () => latest.current(variables) },
       });
@@ -237,7 +228,6 @@ export function useUpdatePatient({ onConflict }: { onConflict?: (latest: Patient
   return mutation;
 }
 
-/** Optimistic delete: the row disappears immediately and returns to its exact spot if the server says no. */
 export function useDeletePatient() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -254,14 +244,14 @@ export function useDeletePatient() {
       toast.success(`${fullName(patient)} was deleted`);
     },
     onError: (error, patient, context) => {
-      // Already gone (deleted elsewhere): the user's intent is fulfilled — do not roll back.
+      // Already deleted elsewhere, which is what the user wanted, so don't roll back.
       if (isApiError(error, ErrorCode.NotFound)) {
         toast.info(`${fullName(patient)} was already deleted`);
         return;
       }
       if (handleOutcomeUnknown(queryClient, error)) return;
       if (context) reinsertRow(queryClient, patient, context.positions);
-      toast.error(`Couldn’t delete ${fullName(patient)}`, {
+      toast.error(`Couldn't delete ${fullName(patient)}`, {
         description: describe(error),
         action: { label: 'Retry', onClick: () => latest.current(patient) },
       });
@@ -272,7 +262,6 @@ export function useDeletePatient() {
   return mutation;
 }
 
-/** Ids of patients with an in-flight update or delete — rendered as "busy" rows. */
 export function usePendingPatientIds(): ReadonlySet<string> {
   const updating = useMutationState({
     filters: { mutationKey: patientMutationKeys.update, status: 'pending' },

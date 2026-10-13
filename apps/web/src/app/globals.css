@@ -4,16 +4,15 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /*
- * ─── Design tokens ────────────────────────────────────────────────────────────
- * Semantic, not literal: components say `bg-primary` or `text-destructive`, never
- * `bg-teal-600`. Re-theming (dark mode, a client brand) means changing this file only.
+ * Design tokens. Components use semantic names (`bg-primary`, `text-destructive`) rather
+ * than `bg-teal-600`, so re-theming (dark mode, a client brand) only touches this file.
  * Colours are OKLCH so lightness steps are perceptually even; every foreground/background
  * pair below meets WCAG AA (4.5:1) for body text.
  */
 :root {
   --radius: 0.625rem;
 
-  /* Neutrals: a cool slate, slightly blue, which reads "clinical" without being cold. */
+  /* Neutrals: a cool, slightly blue slate. */
   --background: oklch(0.985 0.003 240);
   --foreground: oklch(0.22 0.02 250);
   --card: oklch(1 0 0);
@@ -29,7 +28,7 @@
   --border: oklch(0.91 0.008 240);
   --input: oklch(0.88 0.01 240);
 
-  /* Brand: a calm, trustworthy teal. */
+  /* Brand: teal. */
   --primary: oklch(0.5 0.095 200);
   --primary-foreground: oklch(0.99 0.005 200);
   --ring: oklch(0.6 0.11 200);
@@ -125,7 +124,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  /* Elevation scale: xs (controls) → sm (cards) → md (menus) → lg (dialogs). */
+  /* Elevation scale: xs (controls), sm (cards), md (menus), lg (dialogs). */
   --shadow-xs: 0 1px 2px hsl(var(--shadow-color) / 0.06);
   --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.06), 0 1px 3px hsl(var(--shadow-color) / 0.08);
   --shadow-md: 0 2px 4px hsl(var(--shadow-color) / 0.06), 0 6px 16px hsl(var(--shadow-color) / 0.1);
@@ -133,7 +132,7 @@
     0 4px 8px hsl(var(--shadow-color) / 0.08), 0 16px 40px hsl(var(--shadow-color) / 0.16);
 }
 
-/* Motion tokens: short and decelerating — UI should feel responsive, not animated. */
+/* Motion tokens: short, decelerating easings. */
 @theme {
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);

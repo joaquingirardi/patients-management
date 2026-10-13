@@ -1,6 +1,6 @@
 # API reference
 
-Base URL: `http://localhost:3001` (direct) — the web app reaches it through `/api/proxy/*`.
+Base URL: `http://localhost:3001` (direct); the web app reaches it through `/api/proxy/*`.
 All bodies are JSON. Schemas are defined once in [`packages/contracts`](../packages/contracts/src).
 
 **Interactive docs:** Swagger UI at [`/docs`](http://localhost:3001/docs), raw OpenAPI 3.0 at
@@ -77,17 +77,17 @@ Every error is `application/problem+json`:
 }
 ```
 
-| Status | `code`                                                      | When                                                                                                          |
-| ------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 400    | `VALIDATION_FAILED` / `BAD_REQUEST`                         | invalid body/query/id · malformed JSON                                                                        |
-| 401    | `UNAUTHENTICATED` / `TOKEN_EXPIRED` / `INVALID_CREDENTIALS` | missing/invalid token · expired · bad login (+ `WWW-Authenticate`)                                            |
-| 403    | `FORBIDDEN`                                                 | authenticated, lacks permission (e.g. `user` writing)                                                         |
-| 404    | `NOT_FOUND`                                                 | absent, soft-deleted, **or in another organization**                                                          |
-| 409    | `VERSION_CONFLICT`                                          | `PUT` with a stale `version`                                                                                  |
-| 429    | `RATE_LIMITED`                                              | throttled (+ `Retry-After`)                                                                                   |
-| 503    | `SERVICE_UNAVAILABLE`                                       | database still failing after retries (+ `Retry-After`)                                                        |
-| 503    | `OUTCOME_UNKNOWN`                                           | a write lost its connection mid-flight and may have been applied — re-read before retrying (no `Retry-After`) |
-| 500    | `INTERNAL`                                                  | bug — logged with stack and request id, details withheld                                                      |
+| Status | `code`                                                      | When                                                                                                         |
+| ------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 400    | `VALIDATION_FAILED` / `BAD_REQUEST`                         | invalid body/query/id · malformed JSON                                                                       |
+| 401    | `UNAUTHENTICATED` / `TOKEN_EXPIRED` / `INVALID_CREDENTIALS` | missing/invalid token · expired · bad login (+ `WWW-Authenticate`)                                           |
+| 403    | `FORBIDDEN`                                                 | authenticated, lacks permission (e.g. `user` writing)                                                        |
+| 404    | `NOT_FOUND`                                                 | absent, soft-deleted, **or in another organization**                                                         |
+| 409    | `VERSION_CONFLICT`                                          | `PUT` with a stale `version`                                                                                 |
+| 429    | `RATE_LIMITED`                                              | throttled (+ `Retry-After`)                                                                                  |
+| 503    | `SERVICE_UNAVAILABLE`                                       | database still failing after retries (+ `Retry-After`)                                                       |
+| 503    | `OUTCOME_UNKNOWN`                                           | a write lost its connection mid-flight and may have been applied; re-read before retrying (no `Retry-After`) |
+| 500    | `INTERNAL`                                                  | bug; logged with stack and request id, details withheld                                                      |
 
 ## Try it
 

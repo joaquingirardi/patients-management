@@ -22,7 +22,7 @@ describe('CSRF: isSameOriginRequest', () => {
     [{ origin: 'http://app.test' }, true],
     [{ origin: 'http://evil.test' }, false],
     [{}, false],
-  ])('%j → %s', (headers, expected) => {
+  ])('%j -> %s', (headers, expected) => {
     expect(isSameOriginRequest(request('/api/proxy/patients', { method: 'POST', headers }))).toBe(
       expected,
     );

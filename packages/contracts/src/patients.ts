@@ -8,7 +8,7 @@ const PERSON_NAME = /^[\p{L}\p{M}][\p{L}\p{M}' .-]*$/u;
 
 const MAX_INT4 = 2_147_483_647;
 
-/** E.164: "+", a non-zero country code digit, and 8–15 digits in total. */
+/** E.164: "+", a non-zero country code digit, and 8 to 15 digits in total. */
 const E164 = /^\+[1-9]\d{7,14}$/;
 
 const personName = (label: string) =>
@@ -21,10 +21,7 @@ const personName = (label: string) =>
       error: `${label} can only contain letters, spaces, apostrophes, dots and hyphens`,
     });
 
-/**
- * Accepts what humans type ("+1 (415) 555-0132") and normalises it to E.164 ("+14155550132"),
- * which is what we store, compare and dial.
- */
+/** Accepts what people type ("+1 (415) 555-0132") and normalises it to E.164 ("+14155550132"). */
 export const PhoneNumberSchema = z
   .string({ error: 'Phone number is required' })
   .trim()
@@ -47,7 +44,7 @@ export const DateOfBirthSchema = z
     error: 'Date of birth cannot be in the future',
   });
 
-/** Body of `POST /patients`. Also the client-side form schema — validation is defined once. */
+/** Body of `POST /patients`. The web form validates with the same schema. */
 export const PatientInputSchema = z.object({
   firstName: personName('First name'),
   lastName: personName('Last name'),
@@ -65,10 +62,10 @@ export type PatientInput = z.output<typeof PatientInputSchema>;
 export type PatientFormValues = z.input<typeof PatientInputSchema>;
 
 /**
- * Body of `PUT /patients/:id`: a full replacement (the contract's "Request: Patient").
- * `version` is optional so plain Patient bodies stay valid, but when present — the web app always
- * sends the version it last saw — a stale value yields `409 VERSION_CONFLICT` instead of silently
- * overwriting someone else's edit. Bounded to the INT4 column so absurd values are a 400.
+ * Body of `PUT /patients/:id`: a full replacement. `version` is optional so plain Patient bodies
+ * stay valid. When present (the web app always sends the version it last saw), a stale value gets
+ * `409 VERSION_CONFLICT` instead of overwriting someone else's edit. Capped at INT4 so out-of-range
+ * values are a 400 rather than a database error.
  */
 export const UpdatePatientSchema = PatientInputSchema.extend({
   version: z.int().positive().max(MAX_INT4).optional(),
@@ -92,10 +89,10 @@ export const PATIENT_SORT_FIELDS = ['lastName', 'firstName', 'dob', 'createdAt']
 export const PatientSortFieldSchema = z.enum(PATIENT_SORT_FIELDS);
 export type PatientSortField = z.infer<typeof PatientSortFieldSchema>;
 
-/** Deep offsets are expensive; nobody pages 10 000 pages into a patient list. */
+// Deep offsets are expensive and nobody pages this far into a patient list.
 const MAX_PAGE = 10_000;
 
-/** Query string of `GET /patients`. Everything is optional and has a sane default. */
+/** Query string of `GET /patients`. Everything is optional with a default. */
 export const ListPatientsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(MAX_PAGE).default(1),
   limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
@@ -103,7 +100,7 @@ export const ListPatientsQuerySchema = z.object({
     .string()
     .trim()
     .max(100)
-    // Control characters (notably NUL, which PostgreSQL rejects in text) are never meaningful here.
+    // Reject control characters; PostgreSQL errors on NUL in text.
     .regex(/^\P{Cc}*$/u, { error: 'Search contains invalid characters' })
     .optional()
     .transform((value) => (value === '' ? undefined : value)),

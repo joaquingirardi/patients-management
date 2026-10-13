@@ -44,10 +44,7 @@ const SORT_LABELS: Record<PatientSortField, string> = {
 
 const INTERACTIVE = 'a, button, [role="menuitem"], [role="menu"]';
 
-/**
- * Tablet & desktop view. Columns collapse progressively: phone and email get their own columns
- * from `lg`; on `md` the email folds under the name. Below `md` the card list takes over.
- */
+// Tablet/desktop view. On `md` the email folds under the name; below `md` the card list is used.
 export function PatientsTable({ patients, query, pendingIds, onSort }: PatientsTableProps) {
   const router = useRouter();
   const prefetch = usePrefetchPatient();

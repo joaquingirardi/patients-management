@@ -119,7 +119,7 @@ const LAST_NAMES = [
   'Reyes',
 ];
 
-/** Small deterministic PRNG (mulberry32) — reproducible data without a faker dependency. */
+/** Small deterministic PRNG (mulberry32), so the data is reproducible without faker. */
 function prng(seed: number) {
   let state = seed;
   return () => {

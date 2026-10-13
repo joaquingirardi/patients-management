@@ -5,10 +5,8 @@ import type { Params } from 'nestjs-pino';
 import { type AppConfig } from '../../config/app-config';
 
 /**
- * Structured JSON logs with a request id on every line (assigned by the requestId middleware).
- *
- * PHI stays out of logs: query strings (which carry patient search terms) are dropped,
- * credentials are redacted, and bodies are never logged.
+ * Structured JSON logs with a request id on every line. To keep PHI out of the logs, query
+ * strings (patient search terms) are dropped, credentials are redacted and bodies aren't logged.
  */
 export function loggerConfig(config: AppConfig): Params {
   return {

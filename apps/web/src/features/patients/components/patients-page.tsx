@@ -100,7 +100,7 @@ export function PatientsPage() {
             className="bg-warning-subtle text-warning-foreground dark:text-warning flex flex-wrap items-center gap-2 border-b px-4 py-2.5 text-sm md:px-5"
           >
             <AlertTriangle className="size-4 shrink-0" aria-hidden />
-            <span className="flex-1">Couldn’t refresh — showing the last results we loaded.</span>
+            <span className="flex-1">Could not refresh. Showing the last results we loaded.</span>
             <Button size="sm" variant="outline" onClick={() => void refetch()}>
               Retry
             </Button>
@@ -112,7 +112,7 @@ export function PatientsPage() {
         ) : isError && !data ? (
           <ErrorState
             error={error}
-            title="Couldn’t load patients"
+            title="Couldn't load patients"
             onRetry={() => void refetch()}
             retrying={isFetching}
           />
@@ -121,9 +121,7 @@ export function PatientsPage() {
             <EmptyState
               icon={<SearchX />}
               title="No matching patients"
-              description={
-                <>Nothing matches “{query.search}”. Check the spelling or try fewer words.</>
-              }
+              description={`Nothing matches "${query.search}". Check the spelling or try fewer words.`}
               action={
                 <Button variant="outline" onClick={() => setQuery({ search: undefined })}>
                   Clear search

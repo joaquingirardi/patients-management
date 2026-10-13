@@ -4,8 +4,8 @@ import { PatientActionsProvider } from '@/features/patients/components/patient-a
 
 /**
  * `modal` is a parallel route slot. Navigating from the list to /patients/:id is intercepted
- * and renders the details in a dialog *over* the list (list state is preserved underneath);
- * a reload or shared link renders the full page instead. Both share one actions provider.
+ * and renders the details in a dialog over the list (list state is preserved underneath);
+ * a reload or shared link renders the full page instead.
  */
 export default function PatientsLayout({
   children,

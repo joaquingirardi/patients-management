@@ -12,29 +12,29 @@ second save silently overwrites the first.
 ## Decision
 
 - **Server:** every patient has an integer `version`. `PUT /patients/:id` accepts the version the
-  client last saw. It is _optional_ so that the brief's contract (`Request: Patient`) holds for
-  plain bodies — those replace unconditionally — while the web app always sends it; the check and the write are a single atomic statement
-  (`UPDATE … WHERE id AND organization_id AND deleted_at IS NULL AND version = $v`). Zero rows
+  client last saw. It is optional so that the brief's contract (`Request: Patient`) holds for
+  plain bodies (those replace unconditionally), while the web app always sends it. The check
+  and the write are a single atomic statement (`UPDATE … WHERE id AND organization_id AND deleted_at IS NULL AND version = $v`). Zero rows
   → we distinguish _gone_ (404) from _stale_ (409 `VERSION_CONFLICT`) with one follow-up read.
 - **Client:** create, update and delete are optimistic: `onMutate` applies the change to every
-  cached list; `onError` applies the **targeted inverse** (remove the temp row, revert one row,
-  reinsert at the original index) — never a whole-cache snapshot restore, which would undo
-  _other_ in-flight mutations; `onSettled` revalidates **only when the last in-flight patients
-  mutation settles**, so a refetch cannot resurrect a row whose delete is still pending. In-flight rows are dimmed and marked
-  busy (`aria-busy`), created rows show "Saving…". Dialogs close on submit — the optimistic
-  row _is_ the feedback.
-- **Conflicts** roll back, fetch the latest version (bypassing the cache — the cached copy _is_
+  cached list; `onError` applies the targeted inverse (remove the temp row, revert one row,
+  reinsert at the original index) rather than restoring a whole-cache snapshot, which would undo
+  other in-flight mutations; `onSettled` revalidates only when the last in-flight patients
+  mutation settles, so a refetch cannot resurrect a row whose delete is still pending. In-flight
+  rows are dimmed and marked busy (`aria-busy`), created rows show "Saving...". Dialogs close on
+  submit and the optimistic row is the feedback.
+- Conflicts roll back, fetch the latest version (bypassing the cache, since the cached copy is
   the stale one) and offer "Review", which reopens the form
   with fresh data. A delete that 404s is treated as success (the user's intent is fulfilled).
 
 ## Alternatives considered
 
-- **`ETag` / `If-Match` headers.** The HTTP-native form of the same idea. Body `version` was
+- `ETag` / `If-Match` headers. The HTTP-native form of the same idea. Body `version` was
   chosen because it keeps the contract a single typed schema and survives proxies untouched;
   switching is mechanical.
-- **Last-write-wins.** Simpler; silently loses clinical data.
-- **Pessimistic locking.** Needs lock lifetimes and UI for "locked by…" — wrong trade-off for
-  rare conflicts.
+- Last-write-wins. Simpler; silently loses clinical data.
+- Pessimistic locking. Needs lock lifetimes and a "locked by..." UI, which is the wrong trade-off
+  for rare conflicts.
 
 ## Consequences
 

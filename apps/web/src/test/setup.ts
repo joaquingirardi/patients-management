@@ -52,7 +52,7 @@ if (isDom) {
 let nativeFetch: typeof fetch;
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' });
-  // Browsers resolve relative URLs against the page; Node's fetch does not. Wrap *after*
+  // Browsers resolve relative URLs against the page; Node's fetch does not. Wrap after
   // MSW has patched fetch so requests still flow through the mock server.
   nativeFetch = globalThis.fetch;
   if (!isDom) return;

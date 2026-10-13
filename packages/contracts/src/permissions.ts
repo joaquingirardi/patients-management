@@ -1,9 +1,8 @@
 import { Role } from './roles';
 
 /**
- * Authorization is expressed as *permissions*, not role checks scattered through the code.
- * Roles are just named bundles of permissions. The API enforces this map and the web app
- * uses the very same map to decide what to render — one policy, two enforcement points.
+ * Code checks permissions rather than roles; a role is a named set of permissions. The API
+ * enforces this map and the web app uses it to decide what to render.
  */
 export const Permission = {
   PatientsRead: 'patients:read',

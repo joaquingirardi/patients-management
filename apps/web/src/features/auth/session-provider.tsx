@@ -21,7 +21,7 @@ const WARN_BEFORE_EXPIRY_MS = 60_000;
 const MAX_TIMEOUT_MS = 2_147_483_647; // setTimeout overflows above 2^31-1 ms
 
 /**
- * Client-side session: role-aware rendering plus *proactive* expiry handling. Two paths lead to
+ * Client-side session: role-aware rendering plus proactive expiry handling. Two paths lead to
  * the same "session expired" flow so the user is never stuck on a broken screen:
  *   1. a timer fires at the token's `exp` (with a one-minute heads-up), and
  *   2. any API call answered with 401 (token revoked, clock skew, server restart with new key).
@@ -64,7 +64,7 @@ export function SessionProvider({
     const warn = setTimeout(
       () => {
         toast.info('Your session expires in about a minute', {
-          description: 'Save your work — you will need to sign in again.',
+          description: 'Save your work. You will need to sign in again.',
         });
       },
       Math.min(Math.max(0, remaining - WARN_BEFORE_EXPIRY_MS), MAX_TIMEOUT_MS),
@@ -97,7 +97,7 @@ export function useSession(): SessionContextValue {
   return context;
 }
 
-/** Same permission map as the API (from @pm/contracts) — UI gating can never drift from policy. */
+/** Uses the same permission map as the API (from @pm/contracts). */
 export function useCan(permission: Permission): boolean {
   return useSession().can(permission);
 }

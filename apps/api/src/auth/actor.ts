@@ -12,9 +12,8 @@ export interface Actor {
 }
 
 /**
- * Domain-level authorization check. Guards already enforce permissions at the HTTP edge; services
- * call this too (defence in depth), so a future caller that bypasses HTTP — a job, a CLI, a
- * message consumer — cannot bypass the policy.
+ * Domain-level authorization check. The guards already enforce permissions at the HTTP edge;
+ * services call this as well so callers that don't go through HTTP (a job, a CLI) are covered.
  */
 export function authorize(actor: Actor, permission: Permission): void {
   if (!hasPermission(actor.role, permission)) {

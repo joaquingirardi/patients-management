@@ -8,8 +8,7 @@ declare global {
 }
 
 /**
- * Starts a throwaway PostgreSQL 17 (same major as production) and applies the real migrations,
- * so integration tests exercise the actual schema, constraints and indexes — no mocks, no SQLite.
+ * Starts a throwaway PostgreSQL 17 (same major as production) and applies the real migrations.
  * Set TEST_DATABASE_URL to reuse an existing database instead (e.g. a CI service container).
  */
 export default async function globalSetup(): Promise<void> {
@@ -20,7 +19,7 @@ export default async function globalSetup(): Promise<void> {
     url = container.getConnectionUri();
   }
   process.env['DATABASE_URL'] = url;
-  // `deploy` only applies pending migrations — it never drops data, so it is safe even when
+  // `deploy` only applies pending migrations and never drops data, so it is safe even when
   // TEST_DATABASE_URL points at a shared database. Each suite truncates what it needs.
   execSync('pnpm prisma migrate deploy', {
     cwd: resolve(__dirname, '../..'),

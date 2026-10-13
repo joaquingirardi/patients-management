@@ -1,10 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * End-to-end tests run against a live stack:
- *   CHAOS_ENABLED=false docker compose up --build -d && pnpm test:e2e
- * (Chaos is disabled so failures mean bugs, not dice rolls.)
- */
+// Runs against a live stack, with chaos off so failures are real bugs:
+//   CHAOS_ENABLED=false docker compose up --build -d && pnpm test:e2e
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,

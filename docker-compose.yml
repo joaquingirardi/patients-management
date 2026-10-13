@@ -2,8 +2,8 @@
 #
 #   db       PostgreSQL 17 (persistent volume)
 #   migrate  one-shot: applies migrations, then seeds demo data (idempotent)
-#   api      NestJS API          → http://localhost:3001
-#   web      Next.js web app     → http://localhost:3000
+#   api      NestJS API          http://localhost:3001
+#   web      Next.js web app     http://localhost:3000
 #
 # Start order is enforced with health checks, not sleeps.
 

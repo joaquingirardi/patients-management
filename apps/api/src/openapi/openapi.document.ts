@@ -13,9 +13,8 @@ import {
 import { z } from 'zod';
 
 /**
- * The OpenAPI document is *generated from the contract package* — the same Zod schemas the API
- * validates with and the web app consumes — so the published docs cannot drift from behaviour.
- * Request bodies are described as clients send them (`io: 'input'`), responses as returned.
+ * Generated from the same Zod schemas in @pm/contracts that the API validates with. Request
+ * bodies are described as clients send them (`io: 'input'`), responses as returned.
  */
 type JsonSchema = Record<string, unknown>;
 
@@ -26,7 +25,7 @@ const ref = (name: string) => ({ $ref: `#/components/schemas/${name}` });
 const json = (schema: JsonSchema) => ({ content: { 'application/json': { schema } } });
 
 const problem = (description: string, ...codes: ErrorCode[]) => ({
-  description: `${description} — \`code\`: ${codes.map((c) => `\`${c}\``).join(', ')}`,
+  description: `${description} (\`code\`: ${codes.map((c) => `\`${c}\``).join(', ')})`,
   content: { 'application/problem+json': { schema: ref('ProblemDetails') } },
 });
 
@@ -73,7 +72,7 @@ export function buildOpenApiDocument() {
       version: '1.0.0',
       description:
         'Role-aware patient records. All errors are RFC 9457 Problem Details with a stable `code` and a `requestId`. ' +
-        'Patients are scoped to the caller’s organization: other tenants’ records are indistinguishable from missing ones (404).',
+        "Patients are scoped to the caller's organization: other tenants' records are indistinguishable from missing ones (404).",
     },
     tags: [{ name: 'auth' }, { name: 'patients' }, { name: 'health' }],
     security: [{ bearer: [] }],

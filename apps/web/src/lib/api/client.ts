@@ -2,13 +2,13 @@ import { type z } from 'zod';
 
 import { ApiError, toApiError } from './problem';
 
-/** All browser → API traffic goes through the same-origin BFF proxy (cookie → Bearer). */
+/** Browser requests go through the same-origin BFF proxy, which swaps the cookie for a Bearer token. */
 const BASE = '/api/proxy';
 
 type Listener = (error: ApiError) => void;
 const unauthorizedListeners = new Set<Listener>();
 
-/** Lets the session layer react to a 401 from *any* request (expired or revoked session). */
+/** Lets the session layer react to a 401 from any request (expired or revoked session). */
 export function onUnauthorized(listener: Listener): () => void {
   unauthorizedListeners.add(listener);
   return () => unauthorizedListeners.delete(listener);
@@ -18,7 +18,7 @@ interface RequestOptions<TSchema extends z.ZodType> {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   query?: Record<string, string | number | undefined>;
   body?: unknown;
-  /** Responses are validated at the boundary: contract drift fails loudly, not subtly. */
+  /** Responses are validated against the contract schema. */
   schema: TSchema;
   signal?: AbortSignal;
 }

@@ -7,7 +7,7 @@ import { getSessionToken } from '@/lib/session/get-session';
 
 /**
  * Same-origin gateway to the API: attaches the Bearer token from the httpOnly cookie.
- * It is an allowlist, not an open relay — only the patients resource is reachable.
+ * Only the patients resource is allowlisted; it is not an open relay.
  */
 const ALLOWED_PATH = /^patients(\/[0-9a-f-]{36})?$/i;
 const PASSTHROUGH_HEADERS = ['content-type', 'retry-after', 'x-request-id', 'www-authenticate'];
