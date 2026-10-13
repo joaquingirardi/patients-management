@@ -2,6 +2,7 @@ import { Clock, HeartPulse, Lock, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 
 import { Logo } from '@/components/layout/logo';
+import { getDemoAccounts } from '@/features/auth/demo-accounts';
 import { LoginForm } from '@/features/auth/login-form';
 
 export const metadata: Metadata = { title: 'Sign in' };
@@ -67,7 +68,7 @@ export default async function LoginPage({
             </div>
           )}
 
-          <LoginForm next={next} />
+          <LoginForm next={next} demoAccounts={getDemoAccounts()} />
         </div>
       </main>
     </div>

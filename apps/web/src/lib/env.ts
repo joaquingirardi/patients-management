@@ -14,6 +14,11 @@ const EnvSchema = z.object({
     .stringbool()
     .optional()
     .transform((value) => value ?? process.env.NODE_ENV === 'production'),
+  // One-click demo sign-in on the login page. On in `next dev` and the local Compose stack only.
+  DEMO_ACCOUNTS: z
+    .stringbool()
+    .optional()
+    .transform((value) => value ?? process.env.NODE_ENV !== 'production'),
 });
 
 export const env = EnvSchema.parse(process.env);

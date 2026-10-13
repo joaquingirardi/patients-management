@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import { toast } from 'sonner';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 
@@ -9,6 +9,10 @@ import { server } from './msw/server';
 import { resetNavigation } from './next-navigation';
 
 vi.mock('next/navigation', () => import('./next-navigation'));
+
+// findBy*/waitFor default to 1s. Flows like debounced search (300ms) + fetch + re-render fit
+// easily locally but not always on shared CI runners.
+configure({ asyncUtilTimeout: 3000 });
 
 // jsdom gaps that Radix primitives and Sonner rely on. The DOM typings claim these always
 // exist, hence a runtime `in` check rather than `??=`.

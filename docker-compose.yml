@@ -84,6 +84,8 @@ services:
       API_URL: http://api:3001
       # Cookies over plain http://localhost need Secure=false; behind TLS leave this unset.
       SESSION_COOKIE_SECURE: 'false'
+      # Local demo only: one-click sign-in buttons on the login page.
+      DEMO_ACCOUNTS: 'true'
     ports:
       - '${WEB_PORT:-3000}:3000'
     depends_on:

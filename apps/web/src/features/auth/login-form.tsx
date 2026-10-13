@@ -13,14 +13,15 @@ import { Input } from '@/components/ui/input';
 import { toApiError } from '@/lib/api/problem';
 import { safeRedirectPath } from '@/lib/safe-redirect';
 
-/** Seeded demo accounts (see apps/api/src/database/seed.ts). */
-const DEMO_ACCOUNTS = [
-  { label: 'Admin', hint: 'Full access', email: 'admin@northwind.test', icon: ShieldCheck },
-  { label: 'Viewer', hint: 'Read-only', email: 'user@northwind.test', icon: UserRound },
-] as const;
-const DEMO_PASSWORD = 'Password123!';
+import type { DemoAccount } from './demo-accounts';
 
-export function LoginForm({ next }: { next: string | undefined }) {
+export function LoginForm({
+  next,
+  demoAccounts,
+}: {
+  next: string | undefined;
+  demoAccounts: DemoAccount[];
+}) {
   const router = useRouter();
   const [showPassword, setShowPassword] = React.useState(false);
   const form = useForm<LoginRequest>({
@@ -60,8 +61,8 @@ export function LoginForm({ next }: { next: string | undefined }) {
     router.refresh();
   }
 
-  function fillDemoAccount(email: string) {
-    form.reset({ email, password: DEMO_PASSWORD });
+  function fillDemoAccount({ email, password }: DemoAccount) {
+    form.reset({ email, password });
     form.clearErrors();
   }
 
@@ -126,37 +127,42 @@ export function LoginForm({ next }: { next: string | undefined }) {
         </Button>
       </form>
 
-      <section aria-labelledby="demo-accounts" className="grid gap-3">
-        <div className="flex items-center gap-3">
-          <span className="bg-border h-px flex-1" />
-          <h2
-            id="demo-accounts"
-            className="text-muted-foreground text-xs font-medium uppercase tracking-wide"
-          >
-            Demo accounts
-          </h2>
-          <span className="bg-border h-px flex-1" />
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {DEMO_ACCOUNTS.map(({ label, hint, email, icon: Icon }) => (
-            <button
-              key={email}
-              type="button"
-              onClick={() => fillDemoAccount(email)}
-              className="bg-card hover:border-primary/40 hover:bg-accent/60 focus-visible:ring-ring/40 shadow-xs group flex items-center gap-2.5 rounded-lg border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-[3px]"
+      {demoAccounts.length > 0 && (
+        <section aria-labelledby="demo-accounts" className="grid gap-3">
+          <div className="flex items-center gap-3">
+            <span className="bg-border h-px flex-1" />
+            <h2
+              id="demo-accounts"
+              className="text-muted-foreground text-xs font-medium uppercase tracking-wide"
             >
-              <Icon
-                className="text-primary size-4 shrink-0 transition-transform group-hover:scale-110"
-                aria-hidden
-              />
-              <span className="grid">
-                <span className="text-sm font-medium">{label}</span>
-                <span className="text-muted-foreground text-xs">{hint}</span>
-              </span>
-            </button>
-          ))}
-        </div>
-      </section>
+              Demo accounts
+            </h2>
+            <span className="bg-border h-px flex-1" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {demoAccounts.map((account) => {
+              const Icon = account.role === 'admin' ? ShieldCheck : UserRound;
+              return (
+                <button
+                  key={account.email}
+                  type="button"
+                  onClick={() => fillDemoAccount(account)}
+                  className="bg-card hover:border-primary/40 hover:bg-accent/60 focus-visible:ring-ring/40 shadow-xs group flex items-center gap-2.5 rounded-lg border p-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-[3px]"
+                >
+                  <Icon
+                    className="text-primary size-4 shrink-0 transition-transform group-hover:scale-110"
+                    aria-hidden
+                  />
+                  <span className="grid">
+                    <span className="text-sm font-medium">{account.label}</span>
+                    <span className="text-muted-foreground text-xs">{account.hint}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -55,7 +55,7 @@ hand: PostgreSQL → migrations + demo data → API → web. It is ready when th
 | http://localhost:3001/docs   | interactive API docs (Swagger UI, generated from the contract) |
 | http://localhost:3001/health | API readiness probe                                            |
 
-Sign in with a demo account (or click it on the login page):
+Sign in with a demo account (locally, the login page also has one-click buttons for them):
 
 | Role                | Email                  | Password       | Can                                |
 | ------------------- | ---------------------- | -------------- | ---------------------------------- |
@@ -229,7 +229,7 @@ API (`apps/api/.env.example` documents all of them; validated at boot):
 | `DB_RETRY_MAX_ATTEMPTS`       | `3`                     | `1` disables server retries (shows client-side resilience)   |
 
 Migrator: `SEED_DEMO_DATA=true` loads the demo accounts (Compose only).
-Web: `API_URL` (server-side only), `SESSION_COOKIE_SECURE` (defaults to `true` in production),
+Web: `API_URL` (server-side only), `DEMO_ACCOUNTS` (one-click demo sign-in; on in dev and Compose, off in production builds), `SESSION_COOKIE_SECURE` (defaults to `true` in production),
 `TRUSTED_PROXY_HOPS` (load balancers in front of the web app; default `0`).
 
 ## Fixed in self-review
