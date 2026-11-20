@@ -21,12 +21,12 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.0",
+    "@nestjs/common": "^12.5.1",
     "@nestjs/core": "^11.1.0",
-    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/jwt": "^12.0.5",
     "@nestjs/platform-express": "^11.1.0",
     "@nestjs/swagger": "^11.4.7",
-    "@nestjs/terminus": "^11.0.0",
+    "@nestjs/terminus": "^12.2.0",
     "@nestjs/throttler": "^6.4.0",
     "@pm/contracts": "workspace:*",
     "@prisma/client": "~6.19.0",
@@ -41,7 +41,7 @@
     "zod": "^4.1.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.0",
+    "@nestjs/cli": "^12.0.13",
     "@nestjs/testing": "^11.1.0",
     "@pm/eslint-config": "workspace:*",
     "@pm/tsconfig": "workspace:*",
